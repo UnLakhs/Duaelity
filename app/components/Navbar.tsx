@@ -6,12 +6,12 @@ const navDivStyles = `flex gap-2 cursor-pointer hover:bg-white hover:text-black 
 
 const NavBar = () => {
   return (
-    <nav className="bg-[#18283B] text-[#8392A5] fixed h-full w-36">
+    <nav className="bg-[#0f1925] text-[#8392A5] fixed h-full w-36">
       <div className="flex justify-center">
         <img
           src="images/Duaelity_logo.png"
           alt="Duaelity logo"
-          className="object-cover w-full h-full"
+          className="object-cover w-20 h-20"
         />
       </div>
       <div className={`${navDivStyles}`}> 

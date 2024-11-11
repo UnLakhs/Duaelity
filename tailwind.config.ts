@@ -12,6 +12,10 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        heading: ['"Bebas Neue"'],
+        roboto: ['Roboto', 'sans-serif'],
+      },
     },
   },
   plugins: [],
