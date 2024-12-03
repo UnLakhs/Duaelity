@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "User creation failed" },
+      { error: error },
       { status: 500 }
     );
   }
