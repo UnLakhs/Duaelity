@@ -14,22 +14,22 @@ const TournamentCards = ({
   link,
 }: TournamentCardsProps) => {
   return (
-    // cards
-    <div className="flex flex-col gap-2 font-roboto p-4 h-80 w-72 rounded-md bg-white text-black shadow-md">
-      {/* image container */}
-      <div className="flex-1 h-full">
+    // Cards
+    <div className="flex flex-col gap-2 font-roboto p-4 h-64 sm:h-80 w-2/3 mx-auto sm:w-72 rounded-md bg-white text-black shadow-md">
+      {/* Image container */}
+      <div className="flex-1 h-32 sm:h-40">
         <Link href={`${link}`}>
           <img
             src={`${image}`}
             alt={`${title}`}
-            className="w-full h-full object-cover sm:object-contain"
+            className="w-full h-full object-cover rounded-md"
           />
         </Link>
       </div>
       {/* Text container */}
-      <div className="flex flex-1 flex-col gap-2 h-full">
-        <h3 className="font-bold text-xl">{title}</h3>
-        <span>{description}</span>
+      <div className="flex flex-1 flex-col gap-1 mt-2">
+        <h3 className="font-bold text-lg sm:text-xl">{title}</h3>
+        <p className="text-sm sm:text-base">{description}</p>
       </div>
     </div>
   );

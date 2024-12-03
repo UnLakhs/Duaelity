@@ -24,7 +24,7 @@
           />
         </head>
         <body
-          className={`antialiased text-white`}
+          className={`antialiased text-white bg-[#cbcbcb] h-screen`}
         >
           <NavBar />
           {children}
