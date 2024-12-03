@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { inputStyles } from "@/app/Cosntants/constants";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -52,12 +53,12 @@ const SignUp = () => {
     }
   };
   return (
-    <div className="flex flex-col justify-center items-center text-center h-screen">
+    <div className="flex flex-col justify-center items-center text-center bg-[url('/images/brawlhalla-bg-2.jpg')] h-screen">
       <form
         onSubmit={handleSubmit}
-        className="shadow-xl text-black shadow-gray-600"
+        className="shadow-xl text-white shadow-gray-400 bg-gray-800 rounded-lg p-12"
       >
-        <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
+        <h1 className="text-4xl font-bold mb-10">Sign Up</h1>
         {errorMessage && (
           <div className="mb-4 text-red-500">{errorMessage}</div>
         )}
@@ -69,9 +70,10 @@ const SignUp = () => {
             type="text"
             name="username"
             placeholder="Username"
-            className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
+            className={inputStyles}
             value={formData.username}
             onChange={handleChange}
+            autoComplete="off"
             required
           />
         </div>
@@ -83,9 +85,10 @@ const SignUp = () => {
             type="email"
             name="email"
             placeholder="Email"
-            className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
+            className={inputStyles}
             value={formData.email}
             onChange={handleChange}
+            autoComplete="off"
             required
           />
         </div>
@@ -97,9 +100,10 @@ const SignUp = () => {
             type="password"
             name="password"
             placeholder="Password"
-            className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
+            className={inputStyles}
             value={formData.password}
             onChange={handleChange}
+            autoComplete="off"
             required
           />
         </div>
@@ -110,7 +114,7 @@ const SignUp = () => {
           Sign Up
         </button>
       </form>
-      <div className="p-2 rounded-full hover:opacity-80 transition duration-200 mt-4 bg-blue-700">
+      <div className="p-2 rounded-md hover:opacity-80 transition duration-200 mt-4 bg-blue-700">
         <Link className="font-bold" href={`/Authentication/Login`}>
           Already have an account? Log in!
         </Link>
