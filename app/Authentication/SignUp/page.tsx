@@ -46,7 +46,8 @@ const SignUp = () => {
 
       await response.json();
 
-      alert("User created successfully!");
+      alert("Your account has been created successfully! Redirecting to the login page...");
+      window.location.href = "/Authentication/SignIn";
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage("An error occurred. Please try again.");
