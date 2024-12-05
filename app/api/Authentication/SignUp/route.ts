@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await users.insertOne({
-      username,
-      email,
+      username: username.trim(),
+      email: email.trim(),
       password: hashedPassword,
       isAdmin: false,
     });
