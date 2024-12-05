@@ -1,8 +1,9 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { FaTrophy } from "react-icons/fa";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi"; // Burger and close icons
+import { CiLogin } from "react-icons/ci";
 import Link from "next/link";
 
 // Common styles for nav items
@@ -19,7 +20,7 @@ const NavBar = () => {
         <img
           src="/images/Duaelity_logo.png"
           alt="Duaelity logo"
-           className="object-cover w-12 h-12 lg:w-20 lg:h-20 transition-all duration-300"
+          className="object-cover w-12 h-12 lg:w-20 lg:h-20 transition-all duration-300"
         />
         {/* Burger Menu Button */}
         <button
@@ -48,9 +49,14 @@ const NavBar = () => {
           <IoIosSearch />
           <span>Search</span>
         </div>
+        <Link href={`/Authentication/SignIn`} className={`${navDivStyles} mt-auto`}>
+          <CiLogin />
+          <span>Log In!</span>
+        </Link>
       </div>
     </nav>
   );
 };
 
 export default NavBar;
+

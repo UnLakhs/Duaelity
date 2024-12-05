@@ -52,9 +52,12 @@ const SignIn = () => {
     }
   };
   return (
-    <div className="flex justify-center text-center h-screen">
-      <form onSubmit={handleSubmit} className="shadow-xl shadow-green-600">
-        <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
+    <div className="flex flex-col justify-center items-center text-center bg-[url('/images/brawlhalla-bg-2.jpg')] h-screen">
+      <form
+        onSubmit={handleSubmit}
+        className="shadow-xl text-white shadow-gray-400 bg-gray-800 rounded-lg p-12"
+      >
+        <h1 className="text-4xl font-bold mb-10">Log In</h1>
         {errorMessage && (
           <div className="mb-4 text-red-500">{errorMessage}</div>
         )}
@@ -93,7 +96,11 @@ const SignIn = () => {
           Log in
         </button>
       </form>
-      <Link href={"/Authentication/SignUp"}>Don&apos;t have an account? Sign Up!</Link>
+      <div className="p-2 rounded-md hover:opacity-80 transition duration-200 mt-4 bg-blue-700">
+        <Link href={"/Authentication/SignUp"}>
+          Don&apos;t have an account? Sign Up!
+        </Link>
+      </div>
     </div>
   );
 };
