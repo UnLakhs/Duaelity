@@ -1,17 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { FaTrophy } from "react-icons/fa";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi"; // Burger and close icons
 import { CiLogin } from "react-icons/ci";
 import Link from "next/link";
+import { User } from "../Cosntants/constants";
 
 // Common styles for nav items
 const navDivStyles = `flex gap-2 cursor-pointer hover:bg-white hover:text-black transition duration-300 p-4 justify-start items-center`;
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to toggle the menu
+  const [user, setUser] = useState<User | null>(null); // State to store user data
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`/api/Authentication/Session`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error("Failed to fetch uesr session", error);
+      }
+    };
+    fetchUser();
+  }, []);
   return (
     <nav className="bg-[#0f1925] text-[#8392A5] sm:static lg:fixed w-full lg:w-36 lg:h-full z-10 transition-all duration-300">
       {/* Logo and burger icon */}
@@ -49,14 +71,22 @@ const NavBar = () => {
           <IoIosSearch />
           <span>Search</span>
         </div>
-        <Link href={`/Authentication/SignIn`} className={`${navDivStyles} mt-auto`}>
-          <CiLogin />
-          <span>Log In!</span>
-        </Link>
+        {user ? (
+          <div className={`${navDivStyles}`}>
+            <span>Welcome {user.username}</span>
+          </div>
+        ) : (
+          <Link
+            href={`/Authentication/SignIn`}
+            className={`${navDivStyles} mt-auto`}
+          >
+            <CiLogin />
+            <span>Log In!</span>
+          </Link>
+        )}
       </div>
     </nav>
   );
 };
 
 export default NavBar;
-
