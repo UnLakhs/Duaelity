@@ -96,7 +96,7 @@ const CreateTournament = () => {
       </h1>
       <form
         onSubmit={handleSubmit}
-        className="shadow-gray-400 text-white bg-gray-800 rounded-lg w-[85%] sm:w-1/3 p-4 sm:p-8 shadow-xl flex flex-col gap-6 max-w-2xl mb-8"
+        className="shadow-gray-400 text-white bg-gray-800 rounded-lg w-[85%] sm:w-1/3 md:w-full p-4 sm:p-8 shadow-xl flex flex-col gap-6 max-w-2xl mb-8"
       >
         {/* Tournament Name */}
         <div className="flex flex-col gap-2">
@@ -134,7 +134,7 @@ const CreateTournament = () => {
           />
         </div>
 
-        <div className="flex sm:flex-row flex-col gap-8 xl:gap-32">
+        <div className="flex lg:flex-row flex-col md:items-center gap-8 lg:gap-40 2xl:gap-32">
           {/* Tournament Date */}
           <div className="flex flex-col gap-2">
             <label htmlFor="tournamentDate" className="text-lg font-medium">
@@ -170,7 +170,7 @@ const CreateTournament = () => {
           </div>
         </div>
 
-        <div className="flex sm:flex-row flex-col gap-8 xl:gap-32">
+        <div className="flex lg:flex-row flex-col gap-8 md:items-center lg:gap-40 2xl:gap-32">
           {/* Tournament Time */}
           <div className="flex flex-col gap-2">
             <label htmlFor="tournamentTime" className="text-lg font-medium">
@@ -205,7 +205,7 @@ const CreateTournament = () => {
           </div>
         </div>
           {/* Tournament Format */}
-          <div className="flex flex-col gap-2 sm:items-center xl:items-start">
+          <div className="flex flex-col gap-2 sm:items-center lg:items-start">
             <label htmlFor="tournamentFormat" className="text-lg font-medium">
               Tournament Format
             </label>
@@ -214,7 +214,7 @@ const CreateTournament = () => {
               id="tournamentType"
               name="tournamentType"
               placeholder="e.g single elimination"
-              className={`${createTournamentInputStyles} sm:w-56 xl:w-full`}
+              className={`${createTournamentInputStyles} sm:w-56 lg:w-full`}
               value={formData.tournamentFormat.tournamentType}
               onChange={(e) => handleNestedChange(e, "tournamentFormat")}
             />         
@@ -225,7 +225,7 @@ const CreateTournament = () => {
         </label>
 
         {/* Prizes */}
-        <div className="flex sm:flex-row flex-col gap-2">
+        <div className="flex lg:flex-row flex-col gap-2">
           <label htmlFor="position" className="text-lg font-medium sm:w-1/3">
             1st Place
           </label>
@@ -241,7 +241,7 @@ const CreateTournament = () => {
             required
           />
         </div>
-        <div className="flex sm:flex-row flex-col gap-2">
+        <div className="flex lg:flex-row flex-col gap-2">
           <label htmlFor="position" className="text-lg font-medium sm:w-1/3">
             2nd Place
           </label>
@@ -257,7 +257,7 @@ const CreateTournament = () => {
             required
           />
         </div>
-        <div className="flex sm:flex-row flex-col gap-2">
+        <div className="flex lg:flex-row flex-col gap-2">
           <label htmlFor="position" className="text-lg font-medium sm:w-1/3">
             3rd Place
           </label>
@@ -275,7 +275,7 @@ const CreateTournament = () => {
         </div>
 
         {/* Entry Fee */}
-        <div className="flex sm:flex-row flex-col gap-2 ">
+        <div className="flex lg:flex-row flex-col gap-2 ">
           <label htmlFor="entryFee" className="text-lg font-medium sm:w-1/3">
             Entry Fee
           </label>
@@ -290,7 +290,7 @@ const CreateTournament = () => {
           />
         </div>
         {/* Entry currency */}
-        <div className="flex sm:flex-row flex-col gap-2">
+        <div className="flex lg:flex-row flex-col gap-2">
           <label htmlFor="entryFeeCurrency" className="text-lg font-medium sm:w-1/3">
             Entry Fee Currency
           </label>
