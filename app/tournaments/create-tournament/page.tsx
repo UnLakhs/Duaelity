@@ -1,9 +1,10 @@
 "use client";
-
 import { createTournamentInputStyles } from "@/app/Cosntants/constants";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const CreateTournament = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     tournamentName: "",
     tournamentDescription: "",
@@ -11,7 +12,13 @@ const CreateTournament = () => {
     tournamentRegistrationDeadline: "",
     tournamentTime: "",
     maxParticipants: "",
-    tournamentFormat: "",
+    tournamentFormat: { tournamentType: "", rounds: 0 },
+    entryFee: { amount: "", currency: "USD" },
+    prizes: [
+      { position: 1, reward: "" },
+      { position: 2, reward: "" },
+      { position: 3, reward: "" },
+    ],
     tournamentImage: "",
   });
 
@@ -19,20 +26,66 @@ const CreateTournament = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleNestedChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    key: keyof typeof formData
+  ) => {
+    const { name, value } = e.target;
+  
+    setFormData((prevData) => {
+      const target = prevData[key];
+  
+      if (Array.isArray(target)) {
+        // Find the index of the element to update (e.g., prizes array)
+        const index = Number(e.target.dataset.index);
+        return {
+          ...prevData,
+          [key]: target.map((item, i) =>
+            i === index ? { ...item, [name]: value } : item
+          ),
+        };
+      } else if (typeof target === "object") {
+        // Handle nested objects
+        return {
+          ...prevData,
+          [key]: {
+            ...target,
+            [name]: value,
+          },
+        };
+      }
+  
+      return prevData;
+    });
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add form submission logic here
+    // Submit form data to the backend
+    const response = await fetch("/api/Tournaments/Create-tournament", {
+      method: "POST",
+      body: JSON.stringify(formData),
+      headers: { "Content-Type": "application/json" },
+    });
+    const result = await response.json();
+    alert(result.message);
+    router.push("/");
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[url('/images/brawlhalla-bg-3.jpg')] bg-cover">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-12 text-white">Create A Tournament</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold mb-12 text-white">
+        Create A Tournament
+      </h1>
       <form
         onSubmit={handleSubmit}
-        className="shadow-gray-400 text-white bg-gray-800 rounded-lg w-[85%] sm:w-1/4 p-4 sm:p-8 shadow-xl flex flex-col gap-6 max-w-2xl mb-8"
+        className="shadow-gray-400 text-white bg-gray-800 rounded-lg w-[85%] sm:w-1/3 p-4 sm:p-8 shadow-xl flex flex-col gap-6 max-w-2xl mb-8"
       >
         {/* Tournament Name */}
         <div className="flex flex-col gap-2">
@@ -42,11 +95,11 @@ const CreateTournament = () => {
           <input
             type="text"
             id="tournamentName"
-            placeholder="Trial of Ymir..."
+            name="tournamentName"
+            placeholder="e.g trial of the damned"
             className={createTournamentInputStyles}
             value={formData.tournamentName}
             onChange={handleChange}
-            name="tournamentName"
             required
           />
         </div>
@@ -61,110 +114,219 @@ const CreateTournament = () => {
           </label>
           <textarea
             id="tournamentDescription"
-            placeholder="Describe your tournament..."
-            className={`${createTournamentInputStyles} resize-none h-32`}
+            name="tournamentDescription"
+            placeholder="e.g Participants will battle it out to be the best and earn money and other prizes"
+            className={createTournamentInputStyles}
             value={formData.tournamentDescription}
             onChange={handleChange}
-            name="tournamentDescription"
             required
           />
         </div>
 
-        {/* Tournament Date */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="tournamentDate" className="text-lg font-medium">
-            Tournament Date
-          </label>
-          <input
-            type="date"
-            id="tournamentDate"
-            className={createTournamentInputStyles}
-            value={formData.tournamentDate}
-            onChange={handleChange}
-            name="tournamentDate"
-            required
-          />
+        <div className="flex sm:flex-row flex-col gap-8 justify-between">
+          {/* Tournament Date */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="tournamentDate" className="text-lg font-medium">
+              Tournament Date
+            </label>
+            <input
+              type="date"
+              id="tournamentDate"
+              name="tournamentDate"
+              className={`${createTournamentInputStyles} sm:w-44`}
+              value={formData.tournamentDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          {/* Tournament Registration Deadline */}
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="tournamentRegistrationDeadline"
+              className="text-lg font-medium"
+            >
+              Registration Deadline
+            </label>
+            <input
+              type="date"
+              id="tournamentRegistrationDeadline"
+              name="tournamentRegistrationDeadline"
+              className={createTournamentInputStyles}
+              value={formData.tournamentRegistrationDeadline}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
-        {/* Registration Deadline */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="tournamentRegistrationDeadline" className="text-lg font-medium">
-            Partcipant Registration Deadline
-          </label>
-          <input
-            type="date"
-            id="tournamentRegistrationDeadline"
-            className={createTournamentInputStyles}
-            value={formData.tournamentRegistrationDeadline}
-            onChange={handleChange}
-            name="tournamentRegistrationDeadline"
-            required
-          />
+        <div className="flex sm:flex-row flex-col gap-8 justify-between">
+          {/* Tournament Time */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="tournamentTime" className="text-lg font-medium">
+              Tournament Time
+            </label>
+            <input
+              type="time"
+              id="tournamentTime"
+              name="tournamentTime"
+              className={`${createTournamentInputStyles} sm:w-44`}
+              value={formData.tournamentTime}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Max Participants */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="maxParticipants" className="text-lg font-medium text-center">
+              Max Participants
+            </label>
+            <input
+              type="number"
+              id="maxParticipants"
+              name="maxParticipants"
+              placeholder="e.g 100"
+              className={`${createTournamentInputStyles} sm:w-44`}
+              value={formData.maxParticipants}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
-        {/* Tournament Time */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="tournamentTime" className="text-lg font-medium">
-            Tournament Time
-          </label>
-          <input
-            type="time"
-            id="tournamentTime"
-            className={createTournamentInputStyles}
-            value={formData.tournamentTime}
-            onChange={handleChange}
-            name="tournamentTime"
-            required
-          />
+        <div className="flex sm:flex-row flex-col gap-8 justify-between">
+          {/* Tournament Format */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="tournamentFormat" className="text-lg font-medium">
+              Tournament Format
+            </label>
+            <input
+              type="text"
+              id="tournamentType"
+              name="tournamentType"
+              placeholder="e.g single elimination"
+              className={`${createTournamentInputStyles} sm:w-44`}
+              value={formData.tournamentFormat.tournamentType}
+              onChange={(e) => handleNestedChange(e, "tournamentFormat")}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="rounds" className="text-lg font-medium text-center">
+              Rounds
+            </label>
+            <input
+              type="number"
+              id="rounds"
+              name="rounds"
+              placeholder="Rounds"
+              className={`${createTournamentInputStyles} sm:w-44`}
+              value={formData.tournamentFormat.rounds}
+              onChange={(e) => handleNestedChange(e, "tournamentFormat")}
+            />
+          </div>
         </div>
 
-        {/* Max Participants */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="maxParticipants" className="text-lg font-medium">
-            Max Participants
+        <label htmlFor="prizes" className="text-2xl font-bold underline">
+          Prizes:
+        </label>
+
+        {/* Prizes */}
+        <div className="flex sm:flex-row flex-col gap-2">
+          <label htmlFor="position" className="text-lg font-medium sm:w-1/3">
+            1st Place
           </label>
           <input
             type="text"
-            id="maxParticipants"
-            placeholder="Enter maximum participants..."
+            id="prizes"
+            name="reward"
+            placeholder="Enter the prize reward for first place"
             className={createTournamentInputStyles}
-            value={formData.maxParticipants}
-            onChange={handleChange}
-            name="maxParticipants"
+            value={formData.prizes[0].reward}
+            onChange={(e) => handleNestedChange(e, "prizes")}
+            data-index="0"
+            required
+          />
+        </div>
+        <div className="flex sm:flex-row flex-col gap-2">
+          <label htmlFor="position" className="text-lg font-medium sm:w-1/3">
+            2nd Place
+          </label>
+          <input
+            type="text"
+            id="prizes"
+            name="reward"
+            placeholder="Enter the prize reward for second place"
+            className={createTournamentInputStyles}
+            value={formData.prizes[1].reward}
+            onChange={(e) => handleNestedChange(e, "prizes")}
+            data-index="1"
+            required
+          />
+        </div>
+        <div className="flex sm:flex-row flex-col gap-2">
+          <label htmlFor="position" className="text-lg font-medium sm:w-1/3">
+            3rd Place
+          </label>
+          <input
+            type="text"
+            id="prizes"
+            name="reward"
+            placeholder="Enter the prize reward for third place"
+            className={createTournamentInputStyles}
+            value={formData.prizes[2].reward}
+            onChange={(e) => handleNestedChange(e, "prizes")}
+            data-index="2"
             required
           />
         </div>
 
-        {/* Tournament Format */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="tournamentFormat" className="text-lg font-medium">
-            Tournament Format
+        {/* Entry Fee */}
+        <div className="flex sm:flex-row flex-col gap-2 ">
+          <label htmlFor="entryFee" className="text-lg font-medium sm:w-1/3">
+            Entry Fee
           </label>
           <input
             type="text"
-            id="tournamentFormat"
-            placeholder="e.g., Single Elimination"
+            id="entryFeeAmount"
+            name="amount"
+            placeholder="Amount (0 for free tournaments)"
             className={createTournamentInputStyles}
-            value={formData.tournamentFormat}
-            onChange={handleChange}
-            name="tournamentFormat"
-            required
+            value={formData.entryFee.amount}
+            onChange={(e) => handleNestedChange(e, "entryFee")}
           />
+        </div>
+        {/* Entry currency */}
+        <div className="flex sm:flex-row flex-col gap-2">
+          <label htmlFor="entryFeeCurrency" className="text-lg font-medium sm:w-1/3">
+            Entry Fee Currency
+          </label>
+          <select
+            id="entryFeeCurrency"
+            name="currency"
+            className={`${createTournamentInputStyles} text-black`}
+            value={formData.entryFee.currency}
+            onChange={(e) => handleNestedChange(e, "entryFee")}
+          >
+            <option value="USD">USD</option>
+            <option value="EUR">Euro</option>
+            <option value="GBP">British Pound</option>
+            <option value="JPY">Japanese Yen</option>
+          </select>
         </div>
 
         {/* Tournament Image */}
         <div className="flex flex-col gap-2">
           <label htmlFor="tournamentImage" className="text-lg font-medium">
-            Tournament Image (URL)
+            Tournament Image URL
           </label>
           <input
-            type="url"
+            type="text"
             id="tournamentImage"
-            placeholder="Image URL..."
+            name="tournamentImage"
+            placeholder="Enter image URL (optional)"
             className={createTournamentInputStyles}
             value={formData.tournamentImage}
             onChange={handleChange}
-            name="tournamentImage"
           />
         </div>
 

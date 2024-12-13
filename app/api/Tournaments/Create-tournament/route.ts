@@ -2,13 +2,11 @@ import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 
 const deleteUser = () => {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-}
+  return NextResponse.json({ error: "User not found" }, { status: 404 });
+};
 
 export async function POST(request: NextRequest) {
   try {
-    let ifUserIsFuckingStupidAndCantUnderstandTheForm;
-
     const client = await clientPromise;
     const db = client.db("Duaelity");
     const tournaments = db.collection("tournaments");
@@ -20,36 +18,41 @@ export async function POST(request: NextRequest) {
       tournamentTime,
       maxParticipants,
       tournamentFormat,
+      entryFee,
+      prizes,
       tournamentImage,
     } = await request.json();
 
+    const existingTournament = await tournaments.findOne({
+      name: tournamentName,
+    });
 
-    const existingTournament = await tournaments.findOne({tournamentName});
-
-
-    
-    if(ifUserIsFuckingStupidAndCantUnderstandTheForm){
-        deleteUser();
+    if (existingTournament) {
+      return NextResponse.json(
+        { error: "Tournament already exists" },
+        { status: 400 }
+      );
     }
+    const newTournament = {
+      name: tournamentName,
+      description: tournamentDescription,
+      date: tournamentDate,
+      registrationDeadline: tournamentRegistrationDeadline,
+      time: tournamentTime,
+      maxParticipants: Number(maxParticipants),
+      participants: [],
+      format: tournamentFormat,
+      entryFee,
+      prizes,
+      image: tournamentImage,
+      status: "upcoming",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
+    await tournaments.insertOne(newTournament);
 
-
- 
-
-    if(existingTournament) {
-        return NextResponse.json({ error: "Tournament already exists" }, { status: 400 });
-    }
-    const newTournament = await tournaments.insertOne({
-        name: tournamentName,
-        description: tournamentDescription,
-        tournamentDate,
-        registrationDeadline: tournamentRegistrationDeadline,
-        tournamentTime,
-        maxParticipants,
-        tournamentFormat,
-        tournamentImage,
-    })
-
+    return NextResponse.json({message: "Tournament created successfully"}, { status: 201 });  
   } catch (error) {
     console.error("Error creating tournament:", error);
     return NextResponse.json(
