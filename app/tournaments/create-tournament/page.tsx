@@ -162,7 +162,7 @@ const CreateTournament = () => {
               type="date"
               id="tournamentRegistrationDeadline"
               name="tournamentRegistrationDeadline"
-              className={createTournamentInputStyles}
+              className={`${createTournamentInputStyles} sm:w-44`}
               value={formData.tournamentRegistrationDeadline}
               onChange={handleChange}
               required
