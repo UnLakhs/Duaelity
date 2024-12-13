@@ -134,7 +134,7 @@ const CreateTournament = () => {
           />
         </div>
 
-        <div className="flex sm:flex-row flex-col gap-8">
+        <div className="flex sm:flex-row flex-col gap-8 xl:gap-32">
           {/* Tournament Date */}
           <div className="flex flex-col gap-2">
             <label htmlFor="tournamentDate" className="text-lg font-medium">
@@ -151,7 +151,7 @@ const CreateTournament = () => {
             />
           </div>
           {/* Tournament Registration Deadline */}
-          <div className="flex flex-col gap-2 sm:ml-12">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="tournamentRegistrationDeadline"
               className="text-md font-medium"
@@ -170,7 +170,7 @@ const CreateTournament = () => {
           </div>
         </div>
 
-        <div className="flex sm:flex-row flex-col gap-8">
+        <div className="flex sm:flex-row flex-col gap-8 xl:gap-32">
           {/* Tournament Time */}
           <div className="flex flex-col gap-2">
             <label htmlFor="tournamentTime" className="text-lg font-medium">
@@ -188,7 +188,7 @@ const CreateTournament = () => {
           </div>
 
           {/* Max Participants */}
-          <div className="flex flex-col gap-2 sm:ml-12">
+          <div className="flex flex-col gap-2">
             <label htmlFor="maxParticipants" className="text-lg font-medium text-center">
               Max Participants
             </label>
@@ -205,7 +205,7 @@ const CreateTournament = () => {
           </div>
         </div>
           {/* Tournament Format */}
-          <div className="flex flex-col gap-2 items-center">
+          <div className="flex flex-col gap-2 sm:items-center xl:items-start">
             <label htmlFor="tournamentFormat" className="text-lg font-medium">
               Tournament Format
             </label>
@@ -214,7 +214,7 @@ const CreateTournament = () => {
               id="tournamentType"
               name="tournamentType"
               placeholder="e.g single elimination"
-              className={`${createTournamentInputStyles} sm:w-56`}
+              className={`${createTournamentInputStyles} sm:w-56 xl:w-full`}
               value={formData.tournamentFormat.tournamentType}
               onChange={(e) => handleNestedChange(e, "tournamentFormat")}
             />         
