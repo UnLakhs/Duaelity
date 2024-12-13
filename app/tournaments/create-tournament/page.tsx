@@ -154,7 +154,7 @@ const CreateTournament = () => {
           <div className="flex flex-col gap-2 sm:ml-12">
             <label
               htmlFor="tournamentRegistrationDeadline"
-              className="text-lg font-medium"
+              className="text-md font-medium"
             >
               Registration Deadline
             </label>
