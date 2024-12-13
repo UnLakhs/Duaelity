@@ -96,7 +96,7 @@ const CreateTournament = () => {
       </h1>
       <form
         onSubmit={handleSubmit}
-        className="shadow-gray-400 text-white bg-gray-800 rounded-lg w-[85%] sm:w-1/3 md:w-full p-4 sm:p-8 shadow-xl flex flex-col gap-6 max-w-2xl mb-8"
+        className="shadow-gray-400 text-white bg-gray-800 rounded-lg w-[85%] xl:w-[40%] sm:w-1/3 md:w-full p-4 sm:p-8 shadow-xl flex flex-col gap-6 max-w-xl mb-8"
       >
         {/* Tournament Name */}
         <div className="flex flex-col gap-2">
@@ -205,7 +205,7 @@ const CreateTournament = () => {
           </div>
         </div>
           {/* Tournament Format */}
-          <div className="flex flex-col gap-2 sm:items-center lg:items-start">
+          <div className="flex flex-col gap-2 sm:items-center md:items-start">
             <label htmlFor="tournamentFormat" className="text-lg font-medium">
               Tournament Format
             </label>
@@ -214,7 +214,7 @@ const CreateTournament = () => {
               id="tournamentType"
               name="tournamentType"
               placeholder="e.g single elimination"
-              className={`${createTournamentInputStyles} sm:w-56 lg:w-full`}
+              className={`${createTournamentInputStyles} sm:w-56 md:w-full`}
               value={formData.tournamentFormat.tournamentType}
               onChange={(e) => handleNestedChange(e, "tournamentFormat")}
             />         
