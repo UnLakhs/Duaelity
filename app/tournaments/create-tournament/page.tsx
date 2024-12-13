@@ -1,7 +1,7 @@
 "use client";
 import { createTournamentInputStyles } from "@/app/Cosntants/constants";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const CreateTournament = () => {
   const router = useRouter();
@@ -22,6 +22,16 @@ const CreateTournament = () => {
     tournamentImage: "",
   });
 
+
+  useEffect(() => {
+    if(formData.tournamentDate) {
+      setFormData((prevData) => ({
+        ...prevData,
+        tournamentRegistrationDeadline: prevData.tournamentDate,
+      }));
+    }
+  }, [formData.tournamentDate]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -32,6 +42,7 @@ const CreateTournament = () => {
     }));
   };
 
+  // Handle nested state updates
   const handleNestedChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     key: keyof typeof formData
@@ -123,7 +134,7 @@ const CreateTournament = () => {
           />
         </div>
 
-        <div className="flex sm:flex-row flex-col gap-8 justify-between">
+        <div className="flex sm:flex-row flex-col gap-8">
           {/* Tournament Date */}
           <div className="flex flex-col gap-2">
             <label htmlFor="tournamentDate" className="text-lg font-medium">
@@ -140,7 +151,7 @@ const CreateTournament = () => {
             />
           </div>
           {/* Tournament Registration Deadline */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 sm:ml-12">
             <label
               htmlFor="tournamentRegistrationDeadline"
               className="text-lg font-medium"
@@ -159,7 +170,7 @@ const CreateTournament = () => {
           </div>
         </div>
 
-        <div className="flex sm:flex-row flex-col gap-8 justify-between">
+        <div className="flex sm:flex-row flex-col gap-8">
           {/* Tournament Time */}
           <div className="flex flex-col gap-2">
             <label htmlFor="tournamentTime" className="text-lg font-medium">
@@ -177,7 +188,7 @@ const CreateTournament = () => {
           </div>
 
           {/* Max Participants */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 sm:ml-12">
             <label htmlFor="maxParticipants" className="text-lg font-medium text-center">
               Max Participants
             </label>
@@ -193,10 +204,8 @@ const CreateTournament = () => {
             />
           </div>
         </div>
-
-        <div className="flex sm:flex-row flex-col gap-8 justify-between">
           {/* Tournament Format */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 items-center">
             <label htmlFor="tournamentFormat" className="text-lg font-medium">
               Tournament Format
             </label>
@@ -205,28 +214,13 @@ const CreateTournament = () => {
               id="tournamentType"
               name="tournamentType"
               placeholder="e.g single elimination"
-              className={`${createTournamentInputStyles} sm:w-44`}
+              className={`${createTournamentInputStyles} sm:w-56`}
               value={formData.tournamentFormat.tournamentType}
               onChange={(e) => handleNestedChange(e, "tournamentFormat")}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="rounds" className="text-lg font-medium text-center">
-              Rounds
-            </label>
-            <input
-              type="number"
-              id="rounds"
-              name="rounds"
-              placeholder="Rounds"
-              className={`${createTournamentInputStyles} sm:w-44`}
-              value={formData.tournamentFormat.rounds}
-              onChange={(e) => handleNestedChange(e, "tournamentFormat")}
-            />
-          </div>
+            />         
         </div>
 
-        <label htmlFor="prizes" className="text-2xl font-bold underline">
+        <label htmlFor="prizes" className="text-2xl font-bold underline text-center">
           Prizes:
         </label>
 
@@ -314,7 +308,7 @@ const CreateTournament = () => {
           </select>
         </div>
 
-        {/* Tournament Image */}
+        {/* Tournament Image
         <div className="flex flex-col gap-2">
           <label htmlFor="tournamentImage" className="text-lg font-medium">
             Tournament Image URL
@@ -328,7 +322,7 @@ const CreateTournament = () => {
             value={formData.tournamentImage}
             onChange={handleChange}
           />
-        </div>
+        </div> */}
 
         {/* Submit Button */}
         <button
