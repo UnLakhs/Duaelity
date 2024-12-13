@@ -9,7 +9,7 @@ export default function Home() {
         <Header />
         <div className="flex sm:flex-row flex-col sm:gap-4 items-center mt-8 justify-center">
           <QuickLinks link="/tournaments" title="View Tournaments" />
-          <QuickLinks link="/tournaments" title="Create an event" />
+          <QuickLinks link="/tournaments/create-tournament" title="Create an event" />
           <QuickLinks link="/tournaments" title="Join a tournament" />
         </div>
       </div>
