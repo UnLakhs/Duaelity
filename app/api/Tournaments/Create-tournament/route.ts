@@ -1,10 +1,6 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 
-const deleteUser = () => {
-  return NextResponse.json({ error: "User not found" }, { status: 404 });
-};
-
 export async function POST(request: NextRequest) {
   try {
     const client = await clientPromise;
