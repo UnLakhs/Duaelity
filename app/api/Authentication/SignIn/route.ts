@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         isAdmin: existingUser.isAdmin,
       },
       jwtSecret,
-      { expiresIn: "1h" }
+      { expiresIn: "4h" }
     );
     const response = NextResponse.json({ success: true });
     response.cookies.set("token", token, {
