@@ -29,7 +29,7 @@ const NavBar = () => {
           setUser(data.user);
         }
       } catch (error) {
-        console.error("Failed to fetch uesr session", error);
+        console.error("Failed to fetch user session", error);
       }
     };
     fetchUser();

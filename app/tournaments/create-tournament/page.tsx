@@ -1,10 +1,11 @@
 "use client";
-import { createTournamentInputStyles } from "@/app/Cosntants/constants";
+import { createTournamentInputStyles, User } from "@/app/Cosntants/constants";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const CreateTournament = () => {
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({
     tournamentName: "",
     tournamentDescription: "",
@@ -19,12 +20,40 @@ const CreateTournament = () => {
       { position: 2, reward: "" },
       { position: 3, reward: "" },
     ],
-    tournamentImage: "",
+    tournamentImage: ""
   });
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`/api/Authentication/Session`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error("Error fetching user session:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // useEffect(() => {
+  //   if(user) {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       username: user.username,
+  //     }));
+  //   }
+  // },[user]);
 
   useEffect(() => {
-    if(formData.tournamentDate) {
+    if (formData.tournamentDate) {
       setFormData((prevData) => ({
         ...prevData,
         tournamentRegistrationDeadline: prevData.tournamentDate,
@@ -48,10 +77,10 @@ const CreateTournament = () => {
     key: keyof typeof formData
   ) => {
     const { name, value } = e.target;
-  
+
     setFormData((prevData) => {
       const target = prevData[key];
-  
+
       if (Array.isArray(target)) {
         // Find the index of the element to update (e.g., prizes array)
         const index = Number(e.target.dataset.index);
@@ -71,22 +100,26 @@ const CreateTournament = () => {
           },
         };
       }
-  
+
       return prevData;
     });
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Submit form data to the backend
-    const response = await fetch("/api/Tournaments/Create-tournament", {
-      method: "POST",
-      body: JSON.stringify(formData),
-      headers: { "Content-Type": "application/json" },
-    });
-    const result = await response.json();
-    alert(result.message);
-    router.push("/");
+    if (user) {
+      const response = await fetch(`/api/Tournaments/Create-tournament/${user.username}`, {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+      });
+      const result = await response.json();
+      alert(result.message);
+      router.push("/");
+    } else {
+      alert("Only logged in users can create tournaments");
+    }
   };
 
   return (
@@ -189,7 +222,10 @@ const CreateTournament = () => {
 
           {/* Max Participants */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="maxParticipants" className="text-lg font-medium text-center">
+            <label
+              htmlFor="maxParticipants"
+              className="text-lg font-medium text-center"
+            >
               Max Participants
             </label>
             <input
@@ -204,23 +240,26 @@ const CreateTournament = () => {
             />
           </div>
         </div>
-          {/* Tournament Format */}
-          <div className="flex flex-col gap-2 sm:items-center md:items-start">
-            <label htmlFor="tournamentFormat" className="text-lg font-medium">
-              Tournament Format
-            </label>
-            <input
-              type="text"
-              id="tournamentType"
-              name="tournamentType"
-              placeholder="e.g single elimination"
-              className={`${createTournamentInputStyles} sm:w-56 md:w-full`}
-              value={formData.tournamentFormat.tournamentType}
-              onChange={(e) => handleNestedChange(e, "tournamentFormat")}
-            />         
+        {/* Tournament Format */}
+        <div className="flex flex-col gap-2 sm:items-center md:items-start">
+          <label htmlFor="tournamentFormat" className="text-lg font-medium">
+            Tournament Format
+          </label>
+          <input
+            type="text"
+            id="tournamentType"
+            name="tournamentType"
+            placeholder="e.g single elimination"
+            className={`${createTournamentInputStyles} sm:w-56 md:w-full`}
+            value={formData.tournamentFormat.tournamentType}
+            onChange={(e) => handleNestedChange(e, "tournamentFormat")}
+          />
         </div>
 
-        <label htmlFor="prizes" className="text-2xl font-bold underline text-center">
+        <label
+          htmlFor="prizes"
+          className="text-2xl font-bold underline text-center"
+        >
           Prizes:
         </label>
 
@@ -291,7 +330,10 @@ const CreateTournament = () => {
         </div>
         {/* Entry currency */}
         <div className="flex lg:flex-row flex-col gap-2">
-          <label htmlFor="entryFeeCurrency" className="text-lg font-medium sm:w-1/3">
+          <label
+            htmlFor="entryFeeCurrency"
+            className="text-lg font-medium sm:w-1/3"
+          >
             Entry Fee Currency
           </label>
           <select

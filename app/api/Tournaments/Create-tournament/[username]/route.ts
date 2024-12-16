@@ -1,8 +1,9 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest, {params}: {params: Promise<{username: string}>}) {
   try {
+    const username = (await params).username
     const client = await clientPromise;
     const db = client.db("Duaelity");
     const tournaments = db.collection("tournaments");
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
       prizes,
       image: tournamentImage,
       status: "upcoming",
+      createdBy: username,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
