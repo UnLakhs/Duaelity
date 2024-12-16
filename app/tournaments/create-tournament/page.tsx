@@ -96,7 +96,7 @@ const CreateTournament = () => {
       </h1>
       <form
         onSubmit={handleSubmit}
-        className="shadow-gray-400 text-white bg-gray-800 rounded-lg w-[85%] xl:w-[40%] sm:w-1/3 md:w-full p-4 sm:p-8 shadow-xl flex flex-col gap-6 max-w-xl mb-8"
+        className="shadow-gray-400 text-white bg-gray-800 rounded-lg w-[85%] xl:w-[40%] sm:w-1/3 md:w-full p-4 sm:p-8 shadow-xl flex flex-col gap-6 lg:max-w-md xl:max-w-lg max-w-xl mb-8"
       >
         {/* Tournament Name */}
         <div className="flex flex-col gap-2">
@@ -134,7 +134,7 @@ const CreateTournament = () => {
           />
         </div>
 
-        <div className="flex lg:flex-row flex-col md:items-center gap-8 lg:gap-40 2xl:gap-32">
+        <div className="flex lg:flex-row flex-col md:items-center gap-8 lg:justify-between">
           {/* Tournament Date */}
           <div className="flex flex-col gap-2">
             <label htmlFor="tournamentDate" className="text-lg font-medium">
@@ -170,7 +170,7 @@ const CreateTournament = () => {
           </div>
         </div>
 
-        <div className="flex lg:flex-row flex-col gap-8 md:items-center lg:gap-40 2xl:gap-32">
+        <div className="flex lg:flex-row flex-col gap-8 md:items-center lg:justify-between">
           {/* Tournament Time */}
           <div className="flex flex-col gap-2">
             <label htmlFor="tournamentTime" className="text-lg font-medium">
