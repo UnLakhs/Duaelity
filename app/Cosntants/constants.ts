@@ -13,6 +13,7 @@ export interface Tournament {
     id: string;
     name: string;
     description: string;
+    date: string;
     startDate: string;
     endDate: string;
     startTime: string;
