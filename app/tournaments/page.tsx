@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Tournament } from "../Cosntants/constants";
+import { Tournament, TournamentPrizes } from "../Cosntants/constants";
 
 const fetchTournaments = async () => {
   try {
@@ -7,7 +7,7 @@ const fetchTournaments = async () => {
       `http://localhost:3000/api/Tournaments/View-tournaments`
     );
     const data = await response.json();
-    // console.log(data);
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Error in fetching tournamets", error);
@@ -38,7 +38,7 @@ const allTournaments = async () => {
             Max Participants: {tournament.maxParticipants}
           </p>
           <div className="mt-4 space-y-1">
-            {tournament.prizes.map((prize: any) => (
+            {tournament.prizes.map((prize: TournamentPrizes) => (
               <div key={prize.position} className="text-sm text-gray-700">
                 <span className="font-semibold">
                   Position {prize.position}:
