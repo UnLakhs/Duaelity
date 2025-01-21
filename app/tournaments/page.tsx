@@ -4,10 +4,10 @@ import { Tournament, TournamentPrizes } from "../Cosntants/constants";
 const fetchTournaments = async () => {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/Tournaments/View-tournaments`
+      `https://duaelity-rho.vercel.app/api/Tournaments/View-tournaments`
     );
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.error("Error in fetching tournamets", error);
