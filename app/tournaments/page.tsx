@@ -1,20 +1,34 @@
 import Image from "next/image";
 import { Tournament, TournamentPrizes } from "../Cosntants/constants";
 
-const fetchTournaments = async () => {
+const fetchTournaments = async (): Promise<Tournament[]> => {
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://duaelity-rho.vercel.app";
   try {
     const response = await fetch(
-      `https://duaelity-rho.vercel.app/api/Tournaments/View-tournaments`
+      `${baseUrl}/api/Tournaments/View-tournaments`,
     );
     const data = await response.json();
     // console.log(data);
     return data;
   } catch (error) {
     console.error("Error in fetching tournamets", error);
+    return [];
   }
 };
 const allTournaments = async () => {
   const tournamentData = await fetchTournaments();
+
+  if (tournamentData.length === 0) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-600">No tournaments available at this time.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-wrap justify-center gap-6 p-6 bg-gray-100 min-h-screen">
       {tournamentData.map((tournament: Tournament) => (
