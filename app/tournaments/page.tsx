@@ -30,7 +30,7 @@ const allTournaments = async () => {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-6 p-6 bg-gray-100 min-h-screen">
+    <div className="flex flex-wrap justify-center gap-6 p-6 min-h-screen">
       {tournamentData.map((tournament: Tournament) => (
         <div
           key={tournament.id}
