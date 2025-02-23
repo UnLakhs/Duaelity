@@ -1,6 +1,19 @@
   import type { Metadata } from "next";
   import "./globals.css";
   import NavBar from "./components/Navbar";
+  import { Bebas_Neue, Roboto } from 'next/font/google';
+
+const bebasNeue = Bebas_Neue({
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+});
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['100', '300', '400', '500', '700', '900'],
+  display: 'swap',
+});
 
   export const metadata: Metadata = {
     title: "Duaelity",
@@ -24,7 +37,7 @@
           />
         </head>
         <body
-          className={`antialiased text-white bg-[#cbcbcb]`}
+          className={`antialiased text-white bg-[#cbcbcb] ${bebasNeue.className} ${roboto.className}`}
         >
           <NavBar />
           {children}
