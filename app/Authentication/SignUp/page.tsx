@@ -133,7 +133,7 @@ const SignUp = () => {
 
       <div className="mt-4">
         <Link
-          href="/Authentication/SignUp"
+          href="/Authentication/SignIn"
           className="text-gray-100 hover:underline hover:text-gray-300 transition-all duration-200 font-semibold"
         >
           Already have an account? Log in!
