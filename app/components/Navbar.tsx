@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { IoIosSearch } from "react-icons/io";
+// import { IoIosSearch } from "react-icons/io";
 import { FaTrophy } from "react-icons/fa";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi"; // Burger and close icons
 import { CiLogin } from "react-icons/ci";
