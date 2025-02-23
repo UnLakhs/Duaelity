@@ -24,7 +24,8 @@ export interface Tournament {
   participants: User[];
   format: TournamentFormat;
   enrtyFee: TournamentEntryFee;
-  prizes: TournamentPrizes[];
+  prizes: TournamentPrizes[]; 
+  totalPrizePool: number;
   rules: string;
   createdBy: User;
   status: "upcoming" | "ongoing" | "finished";

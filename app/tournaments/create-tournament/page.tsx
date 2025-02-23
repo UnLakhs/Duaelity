@@ -15,6 +15,7 @@ const CreateTournament = () => {
     maxParticipants: "",
     tournamentFormat: { tournamentType: "", rounds: 0 },
     entryFee: { amount: "", currency: "USD" },
+    totalPrizePool: "",
     prizes: [
       { position: 1, reward: "" },
       { position: 2, reward: "" },
@@ -264,6 +265,21 @@ const CreateTournament = () => {
         </label>
 
         {/* Prizes */}
+        <div className="flex lg:flex-row flex-col gap-2">
+          <label htmlFor="totalPrizePool" className="text-lg font-medium sm:w-1/3">
+            Total Prize Pool:
+          </label>
+          <input
+            type="number"
+            id="totalPrizePool"
+            name="totalPrizePool"
+            placeholder="Enter the Total Prize Pool e.g 1000"
+            className={createTournamentInputStyles}
+            value={formData.totalPrizePool}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <div className="flex lg:flex-row flex-col gap-2">
           <label htmlFor="position" className="text-lg font-medium sm:w-1/3">
             1st Place

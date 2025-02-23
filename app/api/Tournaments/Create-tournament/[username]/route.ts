@@ -16,6 +16,7 @@ export async function POST(request: NextRequest, {params}: {params: Promise<{use
       maxParticipants,
       tournamentFormat,
       entryFee,
+      totalPrizePool,
       prizes,
       tournamentImage,
     } = await request.json();
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest, {params}: {params: Promise<{use
       participants: [],
       format: tournamentFormat,
       entryFee,
+      totalPrizePool: Number(totalPrizePool),
       prizes,
       image: tournamentImage,
       status: "upcoming",

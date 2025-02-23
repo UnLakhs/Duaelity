@@ -34,33 +34,36 @@ const allTournaments = async () => {
             key={tournament.id?.toString()}
             className="bg-white rounded-lg shadow-md p-4 flex flex-col h-full w-full max-w-xs lg:max-w-sm 2xl:max-w-xs"
           >
-            <Image
-              src="/images/tournament-placeholder.png"
-              alt={tournament.name}
-              width={280}
-              height={120}
-              className="rounded-t-lg object-cover"
-              priority
-            />
-            <div className="flex flex-col h-1/2">
+            <div className="w-full h-1/2 flex-1">
+              <Image
+                src="/images/tournament-placeholder.png"
+                alt={tournament.name}
+                width={200}
+                height={30}
+                className="rounded-t-lg w-full h-fit"
+                priority
+              />
+            </div>
+            <div className="flex flex-col flex-1">
               <h2 className="text-xl font-bold text-gray-800 mt-4">
                 {tournament.name}
               </h2>
               <p className="text-sm text-gray-500">
-              {new Date(tournament.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                {new Date(tournament.date).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })}
               </p>
               {/* <p className="mt-2 font-medium text-gray-700">
                 Max Participants: {tournament.maxParticipants}
               </p> */}
-              <div className="mt-4 space-y-1 flex-grow">
-                {tournament.prizes.map((prize: TournamentPrizes) => (
-                  <div key={prize.position} className="text-sm text-gray-700">
-                    <span className="font-semibold">
-                      Position {prize.position}:
-                    </span>{" "}
-                    {prize.reward}
-                  </div>
-                ))}
+              <div className="mt-4 space-y-1">
+                <p className="text-sm font-semibold text-gray-500">
+                  Total Prize Pool
+                </p>
+                <span className="text-2xl font-extrabold text-yellow-500 gap-2">
+                  🏆 {tournament.totalPrizePool}
+                </span>
               </div>
             </div>
             <button className="mt-4 bg-slate-600 text-white px-4 py-2 rounded transition duration-200 hover:bg-slate-700">
