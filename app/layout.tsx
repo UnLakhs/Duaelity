@@ -37,7 +37,7 @@ const roboto = Roboto({
           />
         </head>
         <body
-          className={`antialiased text-white bg-[#cbcbcb] ${bebasNeue.className} ${roboto.className}`}
+          className={`antialiased text-white bg-gray-400 ${bebasNeue.className} ${roboto.className}`}
         >
           <NavBar />
           {children}
