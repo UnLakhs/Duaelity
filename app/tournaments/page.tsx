@@ -10,8 +10,7 @@ const fetchTournaments = async (): Promise<Tournament[]> => {
     const response = await fetch(
       `${baseUrl}/api/Tournaments/View-tournaments`,
     );
-    const data = await response.json();
-    // console.log(data);
+    const data: Tournament[] = await response.json();
     return data;
   } catch (error) {
     console.error("Error in fetching tournamets", error);
@@ -33,7 +32,7 @@ const allTournaments = async () => {
     <div className="flex flex-wrap justify-center gap-6 p-6 min-h-screen">
       {tournamentData.map((tournament: Tournament) => (
         <div
-          key={tournament.id}
+          key={tournament.id?.toString()}
           className="bg-white rounded-lg shadow-md p-4 w-80"
         >
           <Image

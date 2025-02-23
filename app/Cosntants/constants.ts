@@ -1,8 +1,10 @@
+import { ObjectId } from "mongodb";
+
 export const inputStyles = `text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`;
 export const createTournamentInputStyles = `w-full p-3 text-black shadow appearance-none border rounded leading-tight focus:outline-none focus:shadow-outline`;
 
 export type User = {
-  id: string;
+  id: ObjectId;
   username: string;
   password: string;
   email: string;
@@ -10,7 +12,7 @@ export type User = {
   teamName?: string;
 };
 export interface Tournament {
-  id: string;
+  id: ObjectId;
   name: string;
   description: string;
   date: string;
