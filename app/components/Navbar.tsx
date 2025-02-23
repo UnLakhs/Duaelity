@@ -63,14 +63,14 @@ const NavBar = () => {
           <FaTrophy size={20} />
           <span>Tournaments</span>
         </Link>
-        <div className={`${navDivStyles}`}>
+        {/* <div className={`${navDivStyles}`}>
           <IoIosSearch />
           <span>Search</span>
         </div>
         <div className={`${navDivStyles}`}>
           <IoIosSearch />
           <span>Search</span>
-        </div>
+        </div> */}
         {user ? (
           <div className={`${navDivStyles}`}>
             <span>Welcome {user.username}</span>
