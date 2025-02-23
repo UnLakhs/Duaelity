@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Tournament, TournamentPrizes } from "../Cosntants/constants";
+import { Tournament } from "../Cosntants/constants";
 
 const fetchTournaments = async (): Promise<Tournament[]> => {
   const baseUrl =

@@ -107,7 +107,7 @@ const SignIn = () => {
           href="/Authentication/SignUp"
           className="text-gray-100 hover:underline hover:text-gray-300 transition-all duration-200 font-semibold"
         >
-          Don't have an account? Sign Up!
+          Don&apos;t have an account? Sign Up!
         </Link>
       </div>
     </div>
