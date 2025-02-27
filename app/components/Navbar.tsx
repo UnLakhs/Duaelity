@@ -8,8 +8,8 @@ import Link from "next/link";
 import { User } from "../Cosntants/constants";
 
 // Common styles for nav items
-const navDivStyles = `flex gap-2 cursor-pointer hover:bg-white hover:text-black transition duration-300 p-4 justify-start items-center`;
-
+const navDivStyles = `flex gap-2 cursor-pointer hover:text-white transition-colors duration-300 p-4 justify-start items-center`;
+  
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to toggle the menu
   const [user, setUser] = useState<User | null>(null); // State to store user data
