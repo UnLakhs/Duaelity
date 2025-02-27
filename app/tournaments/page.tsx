@@ -28,24 +28,27 @@ const allTournaments = async () => {
 
   return (
     <div className="min-h-screen">
-      <div className="lg:ml-32 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 p-6 place-items-center">
-        {tournamentData.map((tournament: Tournament) => (
+      <div className="lg:ml-32 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-y-6 lg:gap-x-40 xl:gap-x-48 2xl:gap-x-0 p-6">
+        {tournamentData.map((tournament: Tournament, index: number) => (
           <div
-            key={tournament.id?.toString()}
-            className="bg-white rounded-lg shadow-md p-4 flex flex-col h-full w-full max-w-xs lg:max-w-sm 2xl:max-w-xs"
+            key={tournament.id?.toString() || `tournament-${index}`}
+            className="bg-white rounded-lg shadow-md p-3 flex flex-col gap-3 w-[300px] h-full"
           >
-            <div className="w-full h-1/2 flex-1">
+            <div className="w-full h-40">
               <Image
                 src="/images/tournament-placeholder.png"
                 alt={tournament.name}
-                width={200}
-                height={30}
-                className="rounded-t-lg w-full h-fit"
+                width={300}
+                height={300}
+                className="rounded-t-lg w-full h-full object-cover"
                 priority
               />
             </div>
-            <div className="flex flex-col flex-1">
-              <h2 className="text-xl font-bold text-gray-800 mt-4">
+            <div className="flex-1 px-2 py-1">
+              <h2
+                title={tournament.name}
+                className="text-lg font-bold text-gray-800 truncate"
+              >
                 {tournament.name}
               </h2>
               <p className="text-sm text-gray-500">
@@ -54,19 +57,16 @@ const allTournaments = async () => {
                   day: "numeric",
                 })}
               </p>
-              {/* <p className="mt-2 font-medium text-gray-700">
-                Max Participants: {tournament.maxParticipants}
-              </p> */}
-              <div className="mt-4 space-y-1">
-                <p className="text-sm font-semibold text-gray-500">
+              <div className="mt-1">
+                <p className="text-xs font-semibold text-gray-500">
                   Total Prize Pool
                 </p>
-                <span className="text-2xl font-extrabold text-yellow-500 gap-2">
-                  🏆 {tournament.totalPrizePool}
+                <span className="text-2xl font-extrabold text-yellow-500 flex items-center">
+                  🏆 {tournament.totalPrizePool}$
                 </span>
               </div>
             </div>
-            <button className="mt-4 bg-slate-600 text-white px-4 py-2 rounded transition duration-200 hover:bg-slate-700">
+            <button className="bg-slate-600 text-white px-3 py-2 rounded text-sm hover:bg-slate-700">
               View Details
             </button>
           </div>
