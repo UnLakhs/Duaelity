@@ -3,6 +3,18 @@ import { ObjectId } from "mongodb";
 export const inputStyles = `text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`;
 export const createTournamentInputStyles = `w-full p-3 text-black shadow appearance-none border rounded leading-tight focus:outline-none focus:shadow-outline`;
 
+export const currencyList = [
+  { code: "USD", symbol: "$", name: "US Dollar" },
+  { code: "EUR", symbol: "€", name: "Euro" },
+  { code: "GBP", symbol: "£", name: "British Pound" },
+  { code: "JPY", symbol: "¥", name: "Japanese Yen" },
+  { code: "AUD", symbol: "$", name: "Australian Dollar" },
+  { code: "CAD", symbol: "$", name: "Canadian Dollar" },
+  {code : "CNY", symbol: "¥", name: "Chinese Yuan"},
+  {code : "INR", symbol: "₹", name: "Indian Rupee"},
+  {code: "CHF", symbol: "₣", name: "Swiss Franc"},
+];
+
 export type User = {
   id: ObjectId;
   username: string;
@@ -11,6 +23,7 @@ export type User = {
   isAdmin: boolean;
   teamName?: string;
 };
+
 export interface Tournament {
   id: ObjectId;
   name: string;
@@ -23,7 +36,8 @@ export interface Tournament {
   maxParticipants: number;
   participants: User[];
   format: TournamentFormat;
-  enrtyFee: TournamentEntryFee;
+  enrtyFee: number;
+  currency: string;
   prizes: TournamentPrizes[]; 
   totalPrizePool: number;
   rules: string;
@@ -38,11 +52,6 @@ export interface Tournament {
 export interface TournamentFormat {
   tournamentType: "string"; //single elimination, double elimination, round robin, etc.
   rounds: number;
-}
-
-export interface TournamentEntryFee {
-  amount: number; //0 for free tournaments
-  currency: string;
 }
 
 export interface TournamentPrizes {
