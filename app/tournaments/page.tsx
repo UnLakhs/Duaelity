@@ -7,15 +7,16 @@ const fetchTournaments = async (): Promise<Tournament[]> => {
       ? "http://localhost:3000"
       : "https://duaelity-rho.vercel.app";
   try {
-    const response = await fetch(`${baseUrl}/api/Tournaments/View-tournaments`);
+    const response = await fetch(`${baseUrl}/api/Tournaments/View-tournaments`, {
+      next: { revalidate: 60 },
+    });
     const data: Tournament[] = await response.json();
     return data;
   } catch (error) {
     console.error("Error in fetching tournamets", error);
     return [];
   }
-};
-const allTournaments = async () => {
+};const allTournaments = async () => {
   const tournamentData = await fetchTournaments();
 
   if (tournamentData.length === 0) {
