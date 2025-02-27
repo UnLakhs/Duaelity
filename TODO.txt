@@ -1,4 +1,5 @@
 IMPORTANT TO COMPLETE BEFORE RELEASE
+-refetch tournament data when a tournament is created (maybe fixed)
 -Add failed attempts at login
 -Make the user profile page
 -Add a way to reset password
