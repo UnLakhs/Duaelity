@@ -293,7 +293,11 @@ const CreateTournament = () => {
               className="w-1/4 p-3 shadow appearance-none border rounded leading-tight focus:outline-none focus:shadow-outline text-black"
               value={formData.currency}
               onChange={handleChange}
+              required
             >
+              <option value="" disabled>
+                Currency 
+              </option>
               {currencyList.map(({ code, symbol }) => (
                 <option key={code} value={code}>
                   {`${code} (${symbol})`}
