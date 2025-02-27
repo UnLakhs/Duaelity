@@ -1,0 +1,13 @@
+IMPORTANT TO COMPLETE BEFORE RELEASE
+-Add failed attempts at login
+-Make the user profile page
+-Add a way to reset password
+-Add a way to change password
+-send otp to email for registration
+-figure out what admin privilages will do
+-notification system
+-add more currency options at create tournament
+-find a way to allow users to add an image for their tournament
+
+AFTER RELEASE
+-chat for users
