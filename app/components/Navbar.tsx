@@ -37,7 +37,7 @@ const NavBar = () => {
   return (
     <nav className="bg-[#0f1925] text-[#8392A5] sm:static lg:fixed w-full lg:w-36 lg:h-full z-10 transition-all duration-300">
       {/* Logo and burger icon */}
-      <div className="flex justify-between items-center p-4">
+      <Link href={"/"} className="flex justify-between items-center p-4">
         {/* Logo */}
         <img
           src="/images/Duaelity_logo.png"
@@ -51,7 +51,7 @@ const NavBar = () => {
         >
           {isMenuOpen ? <HiOutlineX size={24} /> : <HiOutlineMenu size={24} />}
         </button>
-      </div>
+      </Link>
 
       {/* Menu Items */}
       <div
@@ -59,7 +59,7 @@ const NavBar = () => {
           isMenuOpen ? "block" : "hidden"
         } lg:block bg-[#0f1925] lg:bg-transparent w-full lg:h-full transition-all duration-300`}
       >
-        <Link href={"/"} className={`${navDivStyles}`}>
+        <Link href={"/tournaments"} className={`${navDivStyles}`}>
           <FaTrophy size={20} />
           <span>Tournaments</span>
         </Link>
