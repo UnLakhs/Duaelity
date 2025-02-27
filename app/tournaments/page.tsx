@@ -28,7 +28,7 @@ const allTournaments = async () => {
 
   return (
     <div className="min-h-screen">
-      <div className="lg:ml-32 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-y-6 lg:gap-x-40 xl:gap-x-48 2xl:gap-x-0 p-6">
+      <div className="lg:ml-32 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 min-[1830px]:grid-cols-5 gap-4 lg:gap-x-24 xl:gap-x-4 p-6">
         {tournamentData.map((tournament: Tournament, index: number) => (
           <div
             key={tournament.id?.toString() || `tournament-${index}`}
