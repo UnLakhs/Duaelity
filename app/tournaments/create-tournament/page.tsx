@@ -1,11 +1,16 @@
 "use client";
-import { createTournamentInputStyles, User } from "@/app/Cosntants/constants";
+import {
+  createTournamentInputStyles,
+  currencyList,
+  User,
+} from "@/app/Cosntants/constants";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const CreateTournament = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+ 
   const [formData, setFormData] = useState({
     tournamentName: "",
     tournamentDescription: "",
@@ -14,14 +19,15 @@ const CreateTournament = () => {
     tournamentTime: "",
     maxParticipants: "",
     tournamentFormat: { tournamentType: "", rounds: 0 },
-    entryFee: { amount: "", currency: "USD" },
+    entryFee: "",
     totalPrizePool: "",
+    currency: "",
     prizes: [
       { position: 1, reward: "" },
       { position: 2, reward: "" },
       { position: 3, reward: "" },
     ],
-    tournamentImage: ""
+    tournamentImage: "",
   });
 
   useEffect(() => {
@@ -44,15 +50,6 @@ const CreateTournament = () => {
     fetchUser();
   }, []);
 
-  // useEffect(() => {
-  //   if(user) {
-  //     setFormData((prevData) => ({
-  //       ...prevData,
-  //       username: user.username,
-  //     }));
-  //   }
-  // },[user]);
-
   useEffect(() => {
     if (formData.tournamentDate) {
       setFormData((prevData) => ({
@@ -63,7 +60,9 @@ const CreateTournament = () => {
   }, [formData.tournamentDate]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -110,11 +109,14 @@ const CreateTournament = () => {
     e.preventDefault();
     // Submit form data to the backend
     if (user) {
-      const response = await fetch(`/api/Tournaments/Create-tournament/${user.username}`, {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `/api/Tournaments/Create-tournament/${user.username}`,
+        {
+          method: "POST",
+          body: JSON.stringify(formData),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       const result = await response.json();
       alert(result.message);
       router.push("/");
@@ -265,21 +267,42 @@ const CreateTournament = () => {
         </label>
 
         {/* Prizes */}
-        <div className="flex lg:flex-row flex-col gap-2">
-          <label htmlFor="totalPrizePool" className="text-lg font-medium sm:w-1/3">
+        <div className="flex flex-col gap-2 items-center lg:items-start">
+          <label
+            htmlFor="totalPrizePool"
+            className="text-lg font-medium lg:w-1/4 min-w-max whitespace-nowrap"
+          >
             Total Prize Pool:
           </label>
-          <input
-            type="number"
-            id="totalPrizePool"
-            name="totalPrizePool"
-            placeholder="Enter the Total Prize Pool e.g 1000"
-            className={createTournamentInputStyles}
-            value={formData.totalPrizePool}
-            onChange={handleChange}
-            required
-          />
+
+          <div className="flex w-full flex-wrap gap-2 lg:gap-4">
+            <input
+              type="text"
+              id="totalPrizePool"
+              name="totalPrizePool"
+              placeholder="Enter the Total Prize Pool e.g 1000"
+              className={`flex-1 min-w-0 ${createTournamentInputStyles}`}
+              value={formData.totalPrizePool}
+              onChange={handleChange}
+              required
+            />
+
+            <select
+              id="currency"
+              name="currency"
+              className="w-1/4 p-3 shadow appearance-none border rounded leading-tight focus:outline-none focus:shadow-outline text-black"
+              value={formData.currency}
+              onChange={handleChange}
+            >
+              {currencyList.map(({ code, symbol }) => (
+                <option key={code} value={code}>
+                  {`${code} (${symbol})`}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
         <div className="flex lg:flex-row flex-col gap-2">
           <label htmlFor="position" className="text-lg font-medium sm:w-1/3">
             1st Place
@@ -336,36 +359,15 @@ const CreateTournament = () => {
           </label>
           <input
             type="text"
-            id="entryFeeAmount"
-            name="amount"
+            id="entryFee"
+            name="entryFee"
             placeholder="Amount (0 for free tournaments)"
             className={createTournamentInputStyles}
-            value={formData.entryFee.amount}
-            onChange={(e) => handleNestedChange(e, "entryFee")}
+            value={formData.entryFee}
+            onChange={handleChange}
           />
         </div>
-        {/* Entry currency */}
-        <div className="flex lg:flex-row flex-col gap-2">
-          <label
-            htmlFor="entryFeeCurrency"
-            className="text-lg font-medium sm:w-1/3"
-          >
-            Entry Fee Currency
-          </label>
-          <select
-            id="entryFeeCurrency"
-            name="currency"
-            className={`${createTournamentInputStyles} text-black`}
-            value={formData.entryFee.currency}
-            onChange={(e) => handleNestedChange(e, "entryFee")}
-          >
-            <option value="USD">USD</option>
-            <option value="EUR">Euro</option>
-            <option value="GBP">British Pound</option>
-            <option value="JPY">Japanese Yen</option>
-          </select>
-        </div>
-
+        
         {/* Tournament Image
         <div className="flex flex-col gap-2">
           <label htmlFor="tournamentImage" className="text-lg font-medium">
@@ -393,5 +395,4 @@ const CreateTournament = () => {
     </div>
   );
 };
-
 export default CreateTournament;
