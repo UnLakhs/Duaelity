@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Tournament } from "../Cosntants/constants";
+import { currencyList, Tournament } from "../Cosntants/constants";
 
 const fetchTournaments = async (): Promise<Tournament[]> => {
   const baseUrl =
@@ -29,8 +29,12 @@ const allTournaments = async () => {
   return (
     <div className="min-h-screen">
       <div className="lg:ml-32 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 min-[1830px]:grid-cols-5 gap-4 lg:gap-x-24 xl:gap-x-4 p-6">
-        {tournamentData.map((tournament: Tournament, index: number) => (
-          <div
+        {tournamentData.map((tournament: Tournament, index: number) => {
+            const currency = currencyList.find((c) => c.code === tournament.currency);
+            const currencySymbol = currency ? currency.symbol : tournament.currency; // Default to code if not found
+
+            return (
+              <div
             key={tournament.id?.toString() || `tournament-${index}`}
             className="bg-white rounded-lg shadow-md p-3 flex flex-col gap-3 w-[300px] h-full"
           >
@@ -62,7 +66,7 @@ const allTournaments = async () => {
                   Total Prize Pool
                 </p>
                 <span className="text-2xl font-extrabold text-yellow-500 flex items-center">
-                  🏆 {tournament.totalPrizePool}$
+                  🏆 {tournament.totalPrizePool}{currencySymbol}
                 </span>
               </div>
             </div>
@@ -70,7 +74,8 @@ const allTournaments = async () => {
               View Details
             </button>
           </div>
-        ))}
+            );
+        })}
       </div>
     </div>
   );
