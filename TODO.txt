@@ -1,5 +1,7 @@
 IMPORTANT TO COMPLETE BEFORE RELEASE
 -refetch tournament data when a tournament is created (maybe fixed)
+-fix the spacing on tablets
+-figure out what to do with old tournaments (maybe delete the match history and keep the placing unless needed to player match history)
 -Add failed attempts at login
 -Make the user profile page
 -Add a way to reset password
