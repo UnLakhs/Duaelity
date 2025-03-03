@@ -47,6 +47,7 @@ export interface Tournament {
   notifications: Notification[];
   createdAt: Date;
   updatedAt: Date;
+  image?: string;
 }
 
 export interface TournamentFormat {
