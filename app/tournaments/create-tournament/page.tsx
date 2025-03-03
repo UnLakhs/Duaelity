@@ -439,6 +439,12 @@ const CreateTournament = () => {
             onChange={handleChange}
           />
         </div>
+        {/* Notes */}
+        <div className="flex flex-col gap-2">
+          <p className="text-xs opacity-75"><strong>*</strong>The currency of the entry fee is the same as the currency used for the total prize pool.</p>
+          <p className="text-xs opacity-75"><strong>*</strong>Newly added tournaments take 1 minute to show in the "all tournaments" section.</p>
+
+        </div>
         {/* Submit Button */}
         <button
           type="submit"
