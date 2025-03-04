@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   //pagination
   const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "10");
+  const limit = parseInt(searchParams.get("limit") || "20");
   const skip = (page - 1) * limit;
 
   const query = search ? { name: { $regex: search, $options: "i" } } : {};
@@ -18,13 +18,14 @@ export async function GET(req: NextRequest) {
     const client = await clientPromise;
     const db = client.db("Duaelity");
     const tournaments = db.collection("tournaments");
+    const totalCount =  await tournaments.countDocuments(query);
     const allTournaments = await tournaments
       .find<Tournament>(query)
       .skip(skip)
       .limit(limit)
       .toArray();
 
-    return NextResponse.json(allTournaments);
+    return NextResponse.json({data: allTournaments, totalCount});
   } catch (error) {
     console.error(error);
     return NextResponse.json(
