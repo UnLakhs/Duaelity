@@ -4,32 +4,67 @@ import { currencyList, Tournament } from "../Cosntants/constants";
 import Search from "../components/Search";
 import { useEffect, useState } from "react";
 
-const fetchTournaments = async (searchQuery = ""): Promise<Tournament[]> => {
+const fetchTournaments = async (
+  searchQuery = "",
+  page = 1,
+  limit = 10
+): Promise<{ data: Tournament[]; totalCount: number }> => {
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
       : "https://duaelity-rho.vercel.app";
   try {
     const response = await fetch(
-      `${baseUrl}/api/Tournaments/View-tournaments?search=${searchQuery}`,
+      `${baseUrl}/api/Tournaments/View-tournaments?search=${searchQuery}&page=${page}&limit=${limit}`,
       {
         next: { revalidate: 60 },
       }
     );
-    const data: Tournament[] = await response.json();
-    return data;
+    const result = await response.json();
+    return result;
   } catch (error) {
-    console.error("Error in fetching tournamets", error);
-    return [];
+    console.error("Error in fetching tournaments", error);
+    return { data: [], totalCount: 0 };
   }
 };
-const allTournaments = () => {
+
+const AllTournaments = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [tournamentData, setTournamentData] = useState<Tournament[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [limit] = useState(20); // You can make this configurable if needed
 
+  // Fetch data whenever the search query or page changes
   useEffect(() => {
-    fetchTournaments(searchQuery).then((data) => setTournamentData(data));
-  }, [searchQuery]);
+    fetchTournaments(searchQuery, currentPage, limit).then((result) => {
+      setTournamentData(result.data);
+      setTotalCount(result.totalCount);
+    });
+  }, [searchQuery, currentPage, limit]);
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(totalCount / limit);
+
+  //Calculate the range of pages to display in the pagination
+  const getPageRange = () => {
+    const range = [];
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, currentPage + 2);
+
+    if (currentPage <= 3) {
+      end = Math.min(5, totalPages);
+    } else if (currentPage >= totalPages - 2) {
+      start = Math.max(totalPages - 4, 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      range.push(i);
+    }
+
+    return range;
+  };
+
 
   if (tournamentData.length === 0) {
     return (
@@ -103,8 +138,42 @@ const allTournaments = () => {
           );
         })}
       </div>
+
+     {/* Pagination Controls */}
+      <div className="flex justify-center mt-8 space-x-2 mb-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-slate-500 text-white rounded-lg disabled:bg-slate-300 hover:bg-slate-700 transition-colors duration-200"
+        >
+          Previous
+        </button>
+
+        {/* Display Page Numbers */}
+        {getPageRange().map((pageNumber) => (
+          <button
+            key={pageNumber}
+            onClick={() => setCurrentPage(pageNumber)}
+            className={`px-4 py-2 ${
+              currentPage === pageNumber
+                ? "bg-slate-700 text-white"
+                : "bg-slate-500 text-white"
+            } rounded-lg hover:bg-slate-700 transition-colors duration-200`}
+          >
+            {pageNumber}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          disabled={currentPage >= totalPages}
+          className="px-4 py-2 bg-slate-500 text-white rounded-lg disabled:bg-slate-300 hover:bg-slate-700 transition-colors duration-200"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
 
-export default allTournaments;
+export default AllTournaments;
