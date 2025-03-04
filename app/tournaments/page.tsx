@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { currencyList, Tournament } from "../Cosntants/constants";
+import Search from "../components/Search";
 
 const fetchTournaments = async (): Promise<Tournament[]> => {
   const baseUrl =
@@ -32,8 +33,12 @@ const allTournaments = async () => {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="lg:ml-32 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 min-[1830px]:grid-cols-5 gap-4 lg:gap-x-24 xl:gap-x-4 p-6">
+    <div className="min-h-screen pt-3">
+      <div className="flex lg:flex-row flex-col items-center justify-between lg:ml-40 mx-auto">
+        <Search />  
+        <span>ORDER BY WILL BE HERE</span>
+      </div>
+      <div className="mx-auto lg:ml-32 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 min-[1830px]:grid-cols-5 gap-4 lg:gap-x-24 xl:gap-x-4 p-6">
         {tournamentData.map((tournament: Tournament, index: number) => {
           const currency = currencyList.find(
             (c) => c.code === tournament.currency
