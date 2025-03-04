@@ -15,7 +15,7 @@ export default function Home() {
       </div>
       <div className="">
         <div className=" text-center flex flex-col gap-8">
-          <h3 className="text-black text-3xl font-roboto font-semibold">
+          <h3 className="text-gray-800 text-3xl font-roboto font-semibold">
             Featured tournaments
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 lg:w-2/3 mx-auto sm:mb-8">
