@@ -48,6 +48,7 @@ export interface Tournament {
   createdAt: Date;
   updatedAt: Date;
   image?: string;
+  game: string;
 }
 
 export interface TournamentFormat {
