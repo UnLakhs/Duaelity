@@ -1,15 +1,17 @@
+"use client";
 import Image from "next/image";
 import { currencyList, Tournament } from "../Cosntants/constants";
 import Search from "../components/Search";
+import { useEffect, useState } from "react";
 
-const fetchTournaments = async (): Promise<Tournament[]> => {
+const fetchTournaments = async (searchQuery = ""): Promise<Tournament[]> => {
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
       : "https://duaelity-rho.vercel.app";
   try {
     const response = await fetch(
-      `${baseUrl}/api/Tournaments/View-tournaments`,
+      `${baseUrl}/api/Tournaments/View-tournaments?search=${searchQuery}`,
       {
         next: { revalidate: 60 },
       }
@@ -21,8 +23,13 @@ const fetchTournaments = async (): Promise<Tournament[]> => {
     return [];
   }
 };
-const allTournaments = async () => {
-  const tournamentData = await fetchTournaments();
+const allTournaments = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [tournamentData, setTournamentData] = useState<Tournament[]>([]);
+
+  useEffect(() => {
+    fetchTournaments(searchQuery).then((data) => setTournamentData(data));
+  }, [searchQuery]);
 
   if (tournamentData.length === 0) {
     return (
@@ -34,11 +41,11 @@ const allTournaments = async () => {
 
   return (
     <div className="min-h-screen pt-3">
-      <div className="flex lg:flex-row flex-col items-center justify-between lg:ml-40 mx-auto">
-        <Search />  
+      <div className="flex lg:flex-row flex-col items-center justify-between lg:ml-40 mx-auto mb-6">
+        <Search onSearch={(query) => setSearchQuery(query)} />
         <span>ORDER BY WILL BE HERE</span>
       </div>
-      <div className="mx-auto lg:ml-32 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 min-[1830px]:grid-cols-5 gap-4 lg:gap-x-24 xl:gap-x-4 p-6">
+      <div className="lg:ml-32 grid sm:grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 min-[1830px]:grid-cols-5 gap-4 lg:gap-x-24 xl:gap-x-4 sm:p-6">
         {tournamentData.map((tournament: Tournament, index: number) => {
           const currency = currencyList.find(
             (c) => c.code === tournament.currency
