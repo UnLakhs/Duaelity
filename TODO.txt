@@ -1,8 +1,6 @@
 IMPORTANT TO COMPLETE BEFORE RELEASE
-1. Tournament Features
-    -Refetch tournament data when a tournament is created (maybe fixed).
+1. Tournament Features    
     -Add search, filtering, and sorting to the tournament listing page.
-    -Add a way for users to upload an image for their tournament (already integrated with Cloudinary).
     -Figure out what to do with old tournaments (e.g., delete match history but keep player placements unless needed for player match history).
 
 2. User Authentication and Profiles
@@ -44,7 +42,7 @@ AFTER RELEASE
     -Allow organizers to charge entry fees for tournaments.
     -Add a payment system for prize pools or donations.
 
-5.Advanced Features
+5. Advanced Features
     -Integrate with game APIs (e.g., Steam, Riot Games) to fetch player stats or verify results.
     -Add live streaming integration (e.g., Twitch, YouTube).
 
