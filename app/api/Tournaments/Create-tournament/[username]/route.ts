@@ -50,6 +50,7 @@ export async function POST(request: NextRequest, {params}: {params: Promise<{use
       createdBy: username,
       createdAt: new Date(),
       updatedAt: new Date(),
+      game: "Brawlhalla"
     };
 
     await tournaments.insertOne(newTournament);
