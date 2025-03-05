@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const fetchTournaments = async (
   searchQuery = "",
   page = 1,
-  limit = 10
+  limit = 20
 ): Promise<{ data: Tournament[]; totalCount: number }> => {
   const baseUrl =
     process.env.NODE_ENV === "development"
@@ -54,7 +54,7 @@ const AllTournaments = () => {
 
     if (currentPage <= 3) {
       end = Math.min(5, totalPages);
-    } else if (currentPage >= totalPages - 2) {
+    } else if (currentPage >= totalPages - 2) { 
       start = Math.max(totalPages - 4, 1);
     }
 
