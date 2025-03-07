@@ -25,7 +25,7 @@ export type User = {
 };
 
 export interface Tournament {
-  id: ObjectId;
+  _id: ObjectId;
   name: string;
   description: string;
   date: string;
