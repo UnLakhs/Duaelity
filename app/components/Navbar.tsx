@@ -9,7 +9,7 @@ import { User } from "../Cosntants/constants";
 
 // Common styles for nav items
 const navDivStyles = `flex gap-2 cursor-pointer hover:text-white transition-colors duration-300 p-4 justify-start items-center`;
-  
+
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to toggle the menu
   const [user, setUser] = useState<User | null>(null); // State to store user data
@@ -37,13 +37,15 @@ const NavBar = () => {
   return (
     <nav className="bg-[#0f1925] text-[#8392A5] sm:static lg:fixed w-full lg:w-36 lg:h-full z-10 transition-all duration-300">
       {/* Logo and burger icon */}
-      <Link href={"/"} className="flex justify-between items-center p-4">
-        {/* Logo */}
-        <img
-          src="/images/Duaelity_logo.png"
-          alt="Duaelity logo"
-          className="object-cover w-12 h-12 lg:w-20 lg:h-20 transition-all duration-300"
-        />
+      <div className="flex justify-between items-center p-4">
+        <Link href={"/"}>
+          {/* Logo */}
+          <img
+            src="/images/Duaelity_logo.png"
+            alt="Duaelity logo"
+            className="object-cover w-12 h-12 lg:w-20 lg:h-20 transition-all duration-300"
+          />
+        </Link>
         {/* Burger Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -51,7 +53,7 @@ const NavBar = () => {
         >
           {isMenuOpen ? <HiOutlineX size={24} /> : <HiOutlineMenu size={24} />}
         </button>
-      </Link>
+      </div>
 
       {/* Menu Items */}
       <div
@@ -63,14 +65,6 @@ const NavBar = () => {
           <FaTrophy size={20} />
           <span>Tournaments</span>
         </Link>
-        {/* <div className={`${navDivStyles}`}>
-          <IoIosSearch />
-          <span>Search</span>
-        </div>
-        <div className={`${navDivStyles}`}>
-          <IoIosSearch />
-          <span>Search</span>
-        </div> */}
         {user ? (
           <div className={`${navDivStyles}`}>
             <span>Welcome {user.username}</span>
