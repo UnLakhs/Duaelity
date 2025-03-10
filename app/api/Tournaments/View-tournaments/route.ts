@@ -2,6 +2,12 @@ import { Tournament } from "@/app/Cosntants/constants";
 import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 
+// Define the query type
+interface TournamentQuery {
+  name?: { $regex: string; $options: string };
+  status?: { $in: string[] };
+}
+
 export async function GET(req: NextRequest) {
   // Extract query parameters
   const { searchParams } = new URL(req.url);
@@ -12,7 +18,7 @@ export async function GET(req: NextRequest) {
   const skip = (page - 1) * limit; // Calculate skip value for pagination
 
   // Build the query object
-  const query: any = {};
+  const query: TournamentQuery = {};
 
   // Add search filter
   if (search) {
