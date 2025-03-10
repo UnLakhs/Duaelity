@@ -4,19 +4,32 @@ import { currencyList, Tournament, User } from "../Cosntants/constants";
 import Search from "../components/Search";
 import { useEffect, useState } from "react";
 import AdminDelete from "../components/AdminDelete";
+import FiltersSidebar from "../components/FilterSidebar";
+import { FaFilter } from "react-icons/fa";
 
 const fetchTournaments = async (
   searchQuery = "",
   page = 1,
-  limit = 20
+  limit = 20,
+  filters: { statuses: string[] } = { statuses: [] }
 ): Promise<{ data: Tournament[]; totalCount: number }> => {
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
       : "https://duaelity-rho.vercel.app";
   try {
+    const queryParams = new URLSearchParams();
+    queryParams.append("search", searchQuery);
+    queryParams.append("page", page.toString());
+    queryParams.append("limit", limit.toString());
+
+    // Add status filters to the query
+    if (filters.statuses.length > 0) {
+      queryParams.append("status", filters.statuses.join(","));
+    }
+
     const response = await fetch(
-      `${baseUrl}/api/Tournaments/View-tournaments?search=${searchQuery}&page=${page}&limit=${limit}`,
+      `${baseUrl}/api/Tournaments/View-tournaments?${queryParams.toString()}`,
       {
         next: { revalidate: 60 },
       }
@@ -30,9 +43,7 @@ const fetchTournaments = async (
 };
 
 const AllTournaments = () => {
-  const [selectedTournamentId, setSelectedTournamentId] = useState<
-    string | null
-  >(null);
+  const [selectedTournamentId, setSelectedTournamentId] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,14 +52,19 @@ const AllTournaments = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [limit] = useState(20);
 
-  // Fetch data whenever the search query or page changes
+  // State for filters
+  const [filters, setFilters] = useState<{ statuses: string[] }>({ statuses: [] });
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false); // State to manage filter sidebar visibility
+
+  // Fetch data whenever the search query, page, or filter changes
   useEffect(() => {
-    fetchTournaments(searchQuery, currentPage, limit).then((result) => {
+    fetchTournaments(searchQuery, currentPage, limit, filters).then((result) => {
       setTournamentData(result.data);
       setTotalCount(result.totalCount);
     });
-  }, [searchQuery, currentPage, limit]);
+  }, [searchQuery, currentPage, limit, filters]);
 
+  // Fetch user session
   useEffect(() => {
     const fetchUser = async () => {
       const res = await fetch(`/api/Authentication/Session`, {
@@ -64,10 +80,10 @@ const AllTournaments = () => {
     fetchUser();
   }, []);
 
-  // Calculate the total number of pages
+  // Calculate total pages for pagination
   const totalPages = Math.ceil(totalCount / limit);
 
-  //Calculate the range of pages to display in the pagination
+  // Range of pages to display in pagination
   const getPageRange = () => {
     const range = [];
     let start = Math.max(1, currentPage - 2);
@@ -82,7 +98,6 @@ const AllTournaments = () => {
     for (let i = start; i <= end; i++) {
       range.push(i);
     }
-
     return range;
   };
 
@@ -92,15 +107,34 @@ const AllTournaments = () => {
         <Search onSearch={(query) => setSearchQuery(query)} />
         <span>ORDER BY WILL BE HERE</span>
       </div>
-      {tournamentData.length === 0 ? (
-        <div className="flex justify-center items-center min-h-screen">
-          <p className="text-gray-600">
-            No tournaments found. Try searching for another tournament.
-          </p>
-        </div>
-      ) : (
-        <div className="lg:ml-32 grid sm:grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 min-[1830px]:grid-cols-5 gap-4 lg:gap-x-24 xl:gap-x-4 sm:p-6">
-          {tournamentData.map((tournament: Tournament, index: number) => {
+
+      {/* Filter Toggle Button */}
+      <button
+        onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+        className="fixed right-4 top-20 z-50 p-3 bg-slate-600 text-white rounded-full shadow-lg hover:bg-slate-700 transition-colors duration-200"
+      >
+        <FaFilter className="w-6 h-6" /> {/* Use a filter icon */}
+      </button>
+
+      {/* Filter Sidebar */}
+      <div
+        className={`fixed top-0 right-0 h-full w-64 bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out ${
+          isFiltersOpen ? "translate-x-0" : "translate-x-full"
+        } z-40`}
+      >
+        <FiltersSidebar onFiltersChange={setFilters} />
+      </div>
+
+      {/* Tournament List */}
+      <div className="lg:ml-32 grid sm:grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 min-[1830px]:grid-cols-5 gap-4 lg:gap-x-24 xl:gap-x-4 sm:p-6">
+        {tournamentData.length === 0 ? (
+          <div className="flex justify-center items-center min-h-screen">
+            <p className="text-gray-600">
+              No tournaments found. Try searching for another tournament.
+            </p>
+          </div>
+        ) : (
+          tournamentData.map((tournament: Tournament, index: number) => {
             const currency = currencyList.find(
               (c) => c.code === tournament.currency
             );
@@ -167,9 +201,10 @@ const AllTournaments = () => {
                 </button>
               </div>
             );
-          })}
-        </div>
-      )}
+          })
+        )}
+      </div>
+
       {/* Pagination Controls */}
       {tournamentData.length > 0 && (
         <div className="flex justify-center mt-8 space-x-2 mb-4">
@@ -205,6 +240,7 @@ const AllTournaments = () => {
           </button>
         </div>
       )}
+
       <AdminDelete
         tournamentId={selectedTournamentId}
         isOpen={isDeleteModalOpen}
@@ -213,7 +249,7 @@ const AllTournaments = () => {
           setSelectedTournamentId(null);
         }}
         onSuccess={() => {
-          fetchTournaments(searchQuery, currentPage, limit).then((result) => {
+          fetchTournaments(searchQuery, currentPage, limit, filters).then((result) => {
             setTournamentData(result.data);
             setTotalCount(result.totalCount);
           });
