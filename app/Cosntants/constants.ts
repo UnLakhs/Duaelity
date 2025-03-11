@@ -36,7 +36,7 @@ export interface Tournament {
   maxParticipants: number;
   participants: User[];
   format: TournamentFormat;
-  enrtyFee: number;
+  entryFee: number;
   currency: string;
   prizes: TournamentPrizes[]; 
   totalPrizePool: number;
