@@ -2,6 +2,7 @@
   import "./globals.css";
   import NavBar from "./components/Navbar";
   import { Bebas_Neue, Roboto } from 'next/font/google';
+  import { Analytics } from "@vercel/analytics/react"
 
 const bebasNeue = Bebas_Neue({
   subsets: ['latin'],
