@@ -42,6 +42,7 @@ const roboto = Roboto({
         >
           <NavBar />
           {children}
+          <Analytics />
         </body>
       </html>
     );
