@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 //Helper function to calculate the state of a tournament
 const calculateTournamentSate = (startDate: Date, endDate: Date) => {
   const currentDate = new Date();
-  if (startDate > currentDate) {
+  if (currentDate < startDate) {
     return "upcoming";
-  } else if (startDate >= currentDate && endDate <= currentDate) {
+  } else if (currentDate >= startDate && currentDate <= endDate) {
     return "ongoing";
   } else {
     return "finished";
@@ -23,11 +23,12 @@ export async function GET() {
     const allTournaments = await tournaments.find({}).toArray();
 
     for (const tournament of allTournaments) {
+        // Convert to date because the dates are stored as strings
+      const startDate = new Date(tournament.startDate);
+      const endDate = new Date(tournament.endDate);
+
       // Calculate the state of the tournament
-      const newStatus = calculateTournamentSate(
-        tournament.startDate,
-        tournament.endDate
-      );
+      const newStatus = calculateTournamentSate(startDate, endDate);
 
       await tournaments.updateOne(
         {
