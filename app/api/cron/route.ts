@@ -34,13 +34,17 @@ export async function GET() {
       console.log("\nProcessing Tournament:", tournament.name);
       console.log("Tournament ID:", tournament._id);
 
-      // Convert startDate and endDate to Date objects (if they are stored as strings)
-      const startDate = new Date(tournament.startDate);
+      // Construct startDate using date and startTime
+      const startDate = new Date(`${tournament.startDate}T${tournament.startTime}:00`);
+      
+      // Construct endDate as the end of the day (23:59:59.999)
       const endDate = new Date(tournament.endDate);
+      endDate.setHours(23, 59, 59, 999);
+
       console.log("Original Start Date (from DB):", tournament.startDate);
-      console.log("Original End Date (from DB):", tournament.endDate);
-      console.log("Parsed Start Date:", startDate);
-      console.log("Parsed End Date:", endDate);
+      console.log("Original Start Time (from DB):", tournament.startTime);
+      console.log("Constructed Start Date:", startDate);
+      console.log("Constructed End Date:", endDate);
 
       // Calculate the state of the tournament
       const newStatus = calculateTournamentState(startDate, endDate);
