@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { currencyList, Tournament, User } from "../Cosntants/constants";
 import Search from "../components/Search";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import AdminDelete from "../components/AdminDelete";
 import FiltersSidebar from "../components/FilterSidebar";
 import { FaFilter } from "react-icons/fa";
@@ -37,13 +37,15 @@ const fetchTournaments = async (
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error("Error in fetching tournaments", error);
+    console.error("Frontend: Error fetching tournaments:", error);
     return { data: [], totalCount: 0 };
   }
 };
 
 const AllTournaments = () => {
-  const [selectedTournamentId, setSelectedTournamentId] = useState<string | null>(null);
+  const [selectedTournamentId, setSelectedTournamentId] = useState<
+    string | null
+  >(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,16 +55,34 @@ const AllTournaments = () => {
   const [limit] = useState(20);
 
   // State for filters
-  const [filters, setFilters] = useState<{ statuses: string[] }>({ statuses: [] });
+  const [filters, setFilters] = useState<{ statuses: string[] }>({
+    statuses: [],
+  });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false); // State to manage filter sidebar visibility
 
   // Fetch data whenever the search query, page, or filter changes
-  useEffect(() => {
-    fetchTournaments(searchQuery, currentPage, limit, filters).then((result) => {
-      setTournamentData(result.data);
-      setTotalCount(result.totalCount);
-    });
+  const fetchData = useCallback(async () => {
+    const result = await fetchTournaments(
+      searchQuery,
+      currentPage,
+      limit,
+      filters
+    );
+    setTournamentData(result.data);
+    setTotalCount(result.totalCount);
   }, [searchQuery, currentPage, limit, filters]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Refetch data periodically (e.g., every 5 minutes)
+  useEffect(() => {
+    const interval = setInterval(fetchData, 5 * 60 * 1000); // 5 minutes
+    return () => {
+      clearInterval(interval);
+    };
+  }, [fetchData]);
 
   // Fetch user session
   useEffect(() => {
@@ -249,10 +269,12 @@ const AllTournaments = () => {
           setSelectedTournamentId(null);
         }}
         onSuccess={() => {
-          fetchTournaments(searchQuery, currentPage, limit, filters).then((result) => {
-            setTournamentData(result.data);
-            setTotalCount(result.totalCount);
-          });
+          fetchTournaments(searchQuery, currentPage, limit, filters).then(
+            (result) => {
+              setTournamentData(result.data);
+              setTotalCount(result.totalCount);
+            }
+          );
         }}
       />
     </div>

@@ -9,6 +9,7 @@ interface TournamentQuery {
 }
 
 export async function GET(req: NextRequest) {
+
   // Extract query parameters
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") || ""; // Search term
@@ -25,32 +26,62 @@ export async function GET(req: NextRequest) {
     query.name = { $regex: search, $options: "i" }; // Case-insensitive search
   }
 
-  // Add status filter (only if statuses are selected)
-  if (status) {
-    const statuses = status.split(",").map((s) => s.toLowerCase()); // Split statuses into an array (e.g., ["Upcoming", "Ongoing"]) and then convert to lowercase
-    if (statuses.length > 0) {
-      query.status = { $in: statuses }; // Match tournaments with any of the selected statuses
-    }
-  }
-
   try {
     const client = await clientPromise;
     const db = client.db("Duaelity");
     const tournaments = db.collection("tournaments");
 
-    // Get total count of tournaments matching the query
-    const totalCount = await tournaments.countDocuments(query);
-
-    // Fetch tournaments with pagination
+    // Fetch all tournaments matching the search query
     const allTournaments = await tournaments
       .find<Tournament>(query)
       .skip(skip)
       .limit(limit)
       .toArray();
 
-    return NextResponse.json({ data: allTournaments, totalCount });
+    // Calculate status for each tournament and update the database if necessary
+    const now = new Date();
+    const updatedTournaments = await Promise.all(
+      allTournaments.map(async (tournament) => {
+        const startDateTime = new Date(`${tournament.startDate}T${tournament.startTime}:00`);
+        const endDateTime = new Date(`${tournament.endDate}T23:59:59`); // End of the day
+
+        let calculatedStatus: "upcoming" | "ongoing" | "finished";
+        if (now < startDateTime) {
+          calculatedStatus = "upcoming";
+        } else if (now >= startDateTime && now <= endDateTime) {
+          calculatedStatus = "ongoing";
+        } else {
+          calculatedStatus = "finished";
+        }
+
+        // If the calculated status differs from the stored status, update the database
+        if (tournament.status !== calculatedStatus) {
+          await tournaments.updateOne(
+            { _id: tournament._id },
+            { $set: { status: calculatedStatus } }
+          );
+        }
+
+        return { ...tournament, status: calculatedStatus };
+      })
+    );
+
+    // Filter by status if provided
+    const filteredTournaments = status
+      ? updatedTournaments.filter((tournament) =>
+          status
+            .toLowerCase() // Convert filter to lowercase
+            .split(",")
+            .includes(tournament.status.toLowerCase()) // Convert tournament status to lowercase
+        )
+      : updatedTournaments;
+
+    // Get total count of filtered tournaments
+    const totalCount = filteredTournaments.length;
+
+    return NextResponse.json({ data: filteredTournaments, totalCount });
   } catch (error) {
-    console.error(error);
+    console.error("Backend: Error fetching tournaments:", error);
     return NextResponse.json(
       { error: "Failed to fetch tournaments" },
       { status: 500 }
