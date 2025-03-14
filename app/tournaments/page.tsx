@@ -32,6 +32,7 @@ const fetchTournaments = async (
       `${baseUrl}/api/Tournaments/View-tournaments?${queryParams.toString()}`,
       {
         next: { revalidate: 60 },
+        cache: "no-store",
       }
     );
     const result = await response.json();
@@ -201,7 +202,7 @@ const AllTournaments = () => {
                     {tournament.name}
                   </h2>
                   <p className="text-sm text-gray-500">
-                    {new Date(tournament.date).toLocaleDateString("en-US", {
+                    {new Date(tournament.startDate).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })}

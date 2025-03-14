@@ -28,7 +28,6 @@ export interface Tournament {
   _id: ObjectId;
   name: string;
   description: string;
-  date: string;
   startDate: string;
   endDate: string;
   startTime: string;

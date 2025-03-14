@@ -70,7 +70,6 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const newTournament = {
       name: tournamentName,
       description: tournamentDescription,
-      date: tournamentDate,
       startDate: tournamentDate, // Use tournamentDate as startDate
       endDate: tournamentDate, // Use tournamentDate as endDate
       startTime: tournamentTime, // Use `startTime` instead of `time`
