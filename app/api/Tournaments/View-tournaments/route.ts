@@ -39,16 +39,20 @@ export async function GET(req: NextRequest) {
       .toArray();
 
     // Calculate status for each tournament and update the database if necessary
-    const now = new Date();
+    const now = new Date(); // Current time in UTC
+
     const updatedTournaments = await Promise.all(
       allTournaments.map(async (tournament) => {
-        const startDateTime = new Date(`${tournament.startDate}T${tournament.startTime}:00`);
-        const endDateTime = new Date(`${tournament.endDate}T23:59:59`); // End of the day
+        const startDateTimeLocal = new Date(`${tournament.startDate}T${tournament.startTime}:00`);
+        const startDateTimeUTC = new Date(startDateTimeLocal.toISOString()); // Convert to UTC
+
+        const endDateTimeLocal = new Date(`${tournament.endDate}T23:59:59`);
+        const endDateTimeUTC = new Date(endDateTimeLocal.toISOString()); // Convert to UTC
 
         let calculatedStatus: "upcoming" | "ongoing" | "finished";
-        if (now < startDateTime) {
+        if (now < startDateTimeUTC) {
           calculatedStatus = "upcoming";
-        } else if (now >= startDateTime && now <= endDateTime) {
+        } else if (now >= startDateTimeUTC && now <= endDateTimeUTC) {
           calculatedStatus = "ongoing";
         } else {
           calculatedStatus = "finished";
