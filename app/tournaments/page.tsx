@@ -56,8 +56,9 @@ const AllTournaments = () => {
   const [limit] = useState(20);
 
   // State for filters
-  const [filters, setFilters] = useState<{ statuses: string[] }>({
+  const [filters, setFilters] = useState<{ statuses: string[]; prizePoolRange: { min: number, max: number } }>({
     statuses: [],
+    prizePoolRange: {min: 0, max: Infinity},
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false); // State to manage filter sidebar visibility
 
