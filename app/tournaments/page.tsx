@@ -11,7 +11,10 @@ const fetchTournaments = async (
   searchQuery = "",
   page = 1,
   limit = 20,
-  filters: { statuses: string[] } = { statuses: [] }
+  filters: {
+    statuses: string[];
+    prizePoolRange: { min: number; max: number };
+  } = { statuses: [], prizePoolRange: { min: 0, max: Infinity } }
 ): Promise<{ data: Tournament[]; totalCount: number }> => {
   const baseUrl =
     process.env.NODE_ENV === "development"
@@ -26,6 +29,15 @@ const fetchTournaments = async (
     // Add status filters to the query
     if (filters.statuses.length > 0) {
       queryParams.append("status", filters.statuses.join(","));
+    }
+
+    // Add prize pool range filters to the query
+    if (
+      filters.prizePoolRange.min !== 0 ||
+      filters.prizePoolRange.max !== Infinity
+    ) {
+      queryParams.append("minPrizePool", filters.prizePoolRange.min.toString());
+      queryParams.append("maxPrizePool", filters.prizePoolRange.max.toString());
     }
 
     const response = await fetch(
@@ -56,9 +68,12 @@ const AllTournaments = () => {
   const [limit] = useState(20);
 
   // State for filters
-  const [filters, setFilters] = useState<{ statuses: string[]; prizePoolRange: { min: number, max: number } }>({
+  const [filters, setFilters] = useState<{
+    statuses: string[];
+    prizePoolRange: { min: number; max: number };
+  }>({
     statuses: [],
-    prizePoolRange: {min: 0, max: Infinity},
+    prizePoolRange: { min: 0, max: Infinity },
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false); // State to manage filter sidebar visibility
 
@@ -77,6 +92,14 @@ const AllTournaments = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Handle filter changes
+  const handleFiltersChange = (newFilters: {
+    statuses: string[];
+    prizePoolRange: { min: number; max: number };
+  }) => {
+    setFilters(newFilters);
+  };
 
   // Refetch data periodically (e.g., every 5 minutes)
   useEffect(() => {
@@ -144,7 +167,7 @@ const AllTournaments = () => {
           isFiltersOpen ? "translate-x-0" : "translate-x-full"
         } z-40`}
       >
-        <FiltersSidebar onFiltersChange={setFilters} />
+        <FiltersSidebar onFiltersChange={handleFiltersChange} />
       </div>
 
       {/* Tournament List */}
@@ -203,10 +226,13 @@ const AllTournaments = () => {
                     {tournament.name}
                   </h2>
                   <p className="text-sm text-gray-500">
-                    {new Date(tournament.startDate).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {new Date(tournament.startDate).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                      }
+                    )}
                   </p>
                   <div className="mt-1">
                     <p className="text-xs font-semibold text-gray-500">

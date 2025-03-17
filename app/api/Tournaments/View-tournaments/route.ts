@@ -6,17 +6,26 @@ import { NextRequest, NextResponse } from "next/server";
 interface TournamentQuery {
   name?: { $regex: string; $options: string };
   status?: { $in: string[] };
+  totalPrizePool?: { $gte: number; $lte: number }; // Add prize pool range filter
 }
 
 export async function GET(req: NextRequest) {
+  console.log("Backend: Fetching tournaments...");
 
   // Extract query parameters
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") || ""; // Search term
   const status = searchParams.get("status") || ""; // Status filter (e.g., "Upcoming,Ongoing")
+  const minPrizePool = parseFloat(searchParams.get("minPrizePool") || "0"); // Minimum prize pool
+  const maxPrizePool = parseFloat(searchParams.get("maxPrizePool") || "Infinity"); // Maximum prize pool
   const page = parseInt(searchParams.get("page") || "1"); // Pagination: page number
   const limit = parseInt(searchParams.get("limit") || "20"); // Pagination: items per page
   const skip = (page - 1) * limit; // Calculate skip value for pagination
+
+  console.log(
+    `Backend: Search query = "${search}", Status filter = "${status}", ` +
+    `Prize Pool Range = ${minPrizePool}-${maxPrizePool}, Page = ${page}, Limit = ${limit}`
+  );
 
   // Build the query object
   const query: TournamentQuery = {};
@@ -24,6 +33,16 @@ export async function GET(req: NextRequest) {
   // Add search filter
   if (search) {
     query.name = { $regex: search, $options: "i" }; // Case-insensitive search
+  }
+
+  // Add status filter
+  if (status) {
+    query.status = { $in: status.toLowerCase().split(",") }; // Convert to lowercase and split
+  }
+
+  // Add prize pool range filter
+  if (minPrizePool !== 0 || maxPrizePool !== Infinity) {
+    query.totalPrizePool = { $gte: minPrizePool, $lte: maxPrizePool };
   }
 
   try {
@@ -38,8 +57,11 @@ export async function GET(req: NextRequest) {
       .limit(limit)
       .toArray();
 
+    console.log(`Backend: Fetched ${allTournaments.length} tournaments`);
+
     // Calculate status for each tournament and update the database if necessary
     const now = new Date(); // Current time in UTC
+    console.log("Current Time (UTC):", now.toISOString());
 
     const updatedTournaments = await Promise.all(
       allTournaments.map(async (tournament) => {
@@ -48,6 +70,9 @@ export async function GET(req: NextRequest) {
 
         const endDateTimeLocal = new Date(`${tournament.endDate}T23:59:59`);
         const endDateTimeUTC = new Date(endDateTimeLocal.toISOString()); // Convert to UTC
+
+        console.log("Start Date Time (UTC):", startDateTimeUTC.toISOString());
+        console.log("End Date Time (UTC):", endDateTimeUTC.toISOString());
 
         let calculatedStatus: "upcoming" | "ongoing" | "finished";
         if (now < startDateTimeUTC) {
@@ -58,8 +83,13 @@ export async function GET(req: NextRequest) {
           calculatedStatus = "finished";
         }
 
+        console.log("Calculated Status:", calculatedStatus);
+
         // If the calculated status differs from the stored status, update the database
         if (tournament.status !== calculatedStatus) {
+          console.log(
+            `Backend: Updating status for tournament ${tournament._id} from "${tournament.status}" to "${calculatedStatus}"`
+          );
           await tournaments.updateOne(
             { _id: tournament._id },
             { $set: { status: calculatedStatus } }
@@ -69,6 +99,8 @@ export async function GET(req: NextRequest) {
         return { ...tournament, status: calculatedStatus };
       })
     );
+
+    console.log("Backend: Calculated and updated statuses for tournaments");
 
     // Filter by status if provided
     const filteredTournaments = status
@@ -80,8 +112,10 @@ export async function GET(req: NextRequest) {
         )
       : updatedTournaments;
 
+    console.log(`Backend: Filtered to ${filteredTournaments.length} tournaments`);
+
     // Get total count of filtered tournaments
-    const totalCount = filteredTournaments.length;
+    const totalCount = await tournaments.countDocuments(query);
 
     return NextResponse.json({ data: filteredTournaments, totalCount });
   } catch (error) {
