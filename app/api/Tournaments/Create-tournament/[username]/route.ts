@@ -12,9 +12,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const {
       tournamentName,
       tournamentDescription,
-      tournamentDate,
-      tournamentRegistrationDeadline,
-      tournamentTime,
+      tournamentDate, // Local date (e.g., "2025-03-14")
+      tournamentRegistrationDeadline, // Local date (e.g., "2025-03-14")
+      tournamentTime, // Local time (e.g., "13:15")
       maxParticipants,
       tournamentFormat,
       currency,
@@ -66,14 +66,23 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       );
     }
 
+    // Convert local dates/times to UTC
+    const startDateTimeLocal = new Date(`${tournamentDate}T${tournamentTime}:00`);
+    const startDateTimeUTC = startDateTimeLocal.toISOString(); // Convert to UTC
+
+    const registrationDeadlineLocal = new Date(`${tournamentRegistrationDeadline}T23:59:59`);
+    const registrationDeadlineUTC = registrationDeadlineLocal.toISOString(); // Convert to UTC
+
     // Create the new tournament
     const newTournament = {
       name: tournamentName,
       description: tournamentDescription,
-      startDate: tournamentDate, // Use tournamentDate as startDate
-      endDate: tournamentDate, // Use tournamentDate as endDate
-      startTime: tournamentTime, // Use `startTime` instead of `time`
-      registrationDeadline: tournamentRegistrationDeadline,
+      startDate: tournamentDate, // Store the local date for display purposes
+      endDate: tournamentDate, // Store the local date for display purposes
+      startTime: tournamentTime, // Store the local time for display purposes
+      registrationDeadline: tournamentRegistrationDeadline, // Store the local date for display purposes
+      startDateTimeUTC, // Store the UTC start date/time for calculations
+      registrationDeadlineUTC, // Store the UTC registration deadline for calculations
       maxParticipants: Number(maxParticipants),
       participants: [],
       format: tournamentFormat,
