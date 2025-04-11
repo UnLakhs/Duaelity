@@ -16,8 +16,13 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") || ""; // Search term
   const status = searchParams.get("status") || ""; // Status filter (e.g., "Upcoming,Ongoing")
-  const minPrizePool = parseFloat(searchParams.get("minPrizePool") || "0"); // Minimum prize pool
-  const maxPrizePool = parseFloat(searchParams.get("maxPrizePool") || "Infinity"); // Maximum prize pool
+  const minPrizePoolParam = searchParams.get("minPrizePool");
+  const maxPrizePoolParam = searchParams.get("maxPrizePool");
+  
+  const minPrizePool = minPrizePoolParam ? parseFloat(minPrizePoolParam) : 0;
+  const maxPrizePool = maxPrizePoolParam ? parseFloat(maxPrizePoolParam) : Infinity;
+
+  
   const page = parseInt(searchParams.get("page") || "1"); // Pagination: page number
   const limit = parseInt(searchParams.get("limit") || "20"); // Pagination: items per page
   const skip = (page - 1) * limit; // Calculate skip value for pagination
@@ -40,11 +45,18 @@ export async function GET(req: NextRequest) {
     query.status = { $in: status.toLowerCase().split(",") }; // Convert to lowercase and split
   }
 
-  // Add prize pool range filter
-  if (minPrizePool !== 0 || maxPrizePool !== Infinity) {
-    query.totalPrizePool = { $gte: minPrizePool, $lte: maxPrizePool };
+    // Add prize pool range filter
+  const prizePoolFilter: any = {};
+  if (minPrizePool > 0) {
+    prizePoolFilter.$gte = minPrizePool;
+  }
+  if (maxPrizePool !== Infinity) {
+    prizePoolFilter.$lte = maxPrizePool;
   }
 
+  if (Object.keys(prizePoolFilter).length > 0) {
+    query.totalPrizePool = prizePoolFilter;
+  }
   try {
     const client = await clientPromise;
     const db = client.db("Duaelity");

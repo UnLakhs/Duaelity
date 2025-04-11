@@ -10,17 +10,29 @@ interface FiltersSidebarProps {
 const FiltersSidebar = ({ onFiltersChange }: FiltersSidebarProps) => {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [prizePoolRange, setPrizePoolRange] = useState<{ min: number; max: number }>({ min: 0, max: Infinity });
+  const [maxInputValue, setMaxInputValue] = useState<string>(''); // Track the input value separately
 
   // Handle status filter changes
   const handleStatusChange = (statuses: string[]) => {
     setSelectedStatuses(statuses);
-    onFiltersChange({ statuses, prizePoolRange }); // Pass the updated filters to the parent
+    onFiltersChange({ statuses, prizePoolRange });
   };
 
   // Handle prize pool range changes
-  const handlePrizePoolRangeChange = (min: number, max: number) => {
-    setPrizePoolRange({ min, max });
-    onFiltersChange({ statuses: selectedStatuses, prizePoolRange: { min, max } }); // Pass the updated filters to the parent
+  const handlePrizePoolRangeChange = (type: 'min' | 'max', value: string) => {
+    const numericValue = value === '' ? (type === 'max' ? Infinity : 0) : Number(value);
+    
+    const newRange = {
+      ...prizePoolRange,
+      [type]: numericValue
+    };
+
+    if (type === 'max') {
+      setMaxInputValue(value); // Store the raw input value
+    }
+
+    setPrizePoolRange(newRange);
+    onFiltersChange({ statuses: selectedStatuses, prizePoolRange: newRange });
   };
 
   return (
@@ -38,19 +50,20 @@ const FiltersSidebar = ({ onFiltersChange }: FiltersSidebarProps) => {
         <h3 className="font-semibold text-lg">Prize Pool</h3>
         <div className="flex gap-2">
           <input
-            type="text"
+            type="number"
             placeholder="Min"
             className="w-1/2 p-2 border rounded-lg bg-gray-700 text-white"
             onChange={(e) =>
-              handlePrizePoolRangeChange(Number(e.target.value), prizePoolRange.max)
+              handlePrizePoolRangeChange('min', e.target.value)
             }
           />
           <input
-            type="text"
+            type="number"
             placeholder="Max"
             className="w-1/2 p-2 border rounded-lg bg-gray-700 text-white"
+            value={maxInputValue}
             onChange={(e) =>
-              handlePrizePoolRangeChange(prizePoolRange.min, Number(e.target.value))
+              handlePrizePoolRangeChange('max', e.target.value)
             }
           />
         </div>

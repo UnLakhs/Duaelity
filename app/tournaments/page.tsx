@@ -31,12 +31,13 @@ const fetchTournaments = async (
       queryParams.append("status", filters.statuses.join(","));
     }
 
-    // Add prize pool range filters to the query
-    if (
-      filters.prizePoolRange.min !== 0 ||
-      filters.prizePoolRange.max !== Infinity
-    ) {
+     // Add prize pool range filters to the query
+     if (filters.prizePoolRange.min > 0) {
       queryParams.append("minPrizePool", filters.prizePoolRange.min.toString());
+    }
+    
+    // Only add max if it's greater than 0 and not Infinity
+    if (filters.prizePoolRange.max > 0 && filters.prizePoolRange.max !== Infinity) {
       queryParams.append("maxPrizePool", filters.prizePoolRange.max.toString());
     }
 
