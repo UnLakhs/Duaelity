@@ -18,18 +18,19 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get("status") || ""; // Status filter (e.g., "Upcoming,Ongoing")
   const minPrizePoolParam = searchParams.get("minPrizePool");
   const maxPrizePoolParam = searchParams.get("maxPrizePool");
-  
-  const minPrizePool = minPrizePoolParam ? parseFloat(minPrizePoolParam) : 0;
-  const maxPrizePool = maxPrizePoolParam ? parseFloat(maxPrizePoolParam) : Infinity;
 
-  
+  const minPrizePool = minPrizePoolParam ? parseFloat(minPrizePoolParam) : 0;
+  const maxPrizePool = maxPrizePoolParam
+    ? parseFloat(maxPrizePoolParam)
+    : Infinity;
+
   const page = parseInt(searchParams.get("page") || "1"); // Pagination: page number
   const limit = parseInt(searchParams.get("limit") || "20"); // Pagination: items per page
   const skip = (page - 1) * limit; // Calculate skip value for pagination
 
   console.log(
     `Backend: Search query = "${search}", Status filter = "${status}", ` +
-    `Prize Pool Range = ${minPrizePool}-${maxPrizePool}, Page = ${page}, Limit = ${limit}`
+      `Prize Pool Range = ${minPrizePool}-${maxPrizePool}, Page = ${page}, Limit = ${limit}`
   );
 
   // Build the query object
@@ -45,8 +46,11 @@ export async function GET(req: NextRequest) {
     query.status = { $in: status.toLowerCase().split(",") }; // Convert to lowercase and split
   }
 
-    // Add prize pool range filter
-  const prizePoolFilter: any = {};
+  // Add prize pool range filter
+  const prizePoolFilter: {
+    $gte?: number;
+    $lte?: number;
+  } = {};
   if (minPrizePool > 0) {
     prizePoolFilter.$gte = minPrizePool;
   }
@@ -55,7 +59,7 @@ export async function GET(req: NextRequest) {
   }
 
   if (Object.keys(prizePoolFilter).length > 0) {
-    query.totalPrizePool = prizePoolFilter;
+    query.totalPrizePool = prizePoolFilter as { $gte: number; $lte: number };
   }
   try {
     const client = await clientPromise;
@@ -77,7 +81,9 @@ export async function GET(req: NextRequest) {
 
     const updatedTournaments = await Promise.all(
       allTournaments.map(async (tournament) => {
-        const startDateTimeLocal = new Date(`${tournament.startDate}T${tournament.startTime}:00`);
+        const startDateTimeLocal = new Date(
+          `${tournament.startDate}T${tournament.startTime}:00`
+        );
         const startDateTimeUTC = new Date(startDateTimeLocal.toISOString()); // Convert to UTC
 
         const endDateTimeLocal = new Date(`${tournament.endDate}T23:59:59`);
@@ -116,15 +122,18 @@ export async function GET(req: NextRequest) {
 
     // Filter by status if provided
     const filteredTournaments = status
-      ? updatedTournaments.filter((tournament) =>
-          status
-            .toLowerCase() // Convert filter to lowercase
-            .split(",")
-            .includes(tournament.status.toLowerCase()) // Convert tournament status to lowercase
+      ? updatedTournaments.filter(
+          (tournament) =>
+            status
+              .toLowerCase() // Convert filter to lowercase
+              .split(",")
+              .includes(tournament.status.toLowerCase()) // Convert tournament status to lowercase
         )
       : updatedTournaments;
 
-    console.log(`Backend: Filtered to ${filteredTournaments.length} tournaments`);
+    console.log(
+      `Backend: Filtered to ${filteredTournaments.length} tournaments`
+    );
 
     // Get total count of filtered tournaments
     const totalCount = await tournaments.countDocuments(query);
