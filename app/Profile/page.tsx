@@ -15,6 +15,7 @@ const Profile = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          next: { revalidate: 60 }, // Revalidate every 60 seconds
         });
         if (response.ok) {
           const data = await response.json();
