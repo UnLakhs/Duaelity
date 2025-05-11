@@ -39,6 +39,7 @@ export async function POST(request: Request) {
         id: existingUser._id,
         username: existingUser.username,
         isAdmin: existingUser.isAdmin,
+        profileImage: existingUser.profileImage,
       },
       jwtSecret,
       { expiresIn: "4h" }
