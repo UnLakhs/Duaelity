@@ -4,27 +4,61 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "@/app/Cosntants/constants";
+import { headers } from "next/headers";
+import { ratelimit } from "@/app/lib/rateLimitier";
 
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
 
 export async function POST(request: NextRequest) {
   const { username, password } = await request.json();
+  const headersData = await headers();
+  const ip = headersData.get("x-forwarded-for") ?? "127.0.0.1"; // Fallback to localhost if header is not present
+  const userAgent = headersData.get("user-agent") ?? "unknown"; // Fallback to unknown if header is not present
+
+  // Create a unique identifier (IP + first 8 chars of user agent hash)
+  const identifier = `${ip}_${userAgent.slice(0, 8)}`;
+
+  // Rate limiting
+  const { success, limit, reset, remaining } = await ratelimit.limit(
+    identifier
+  );
+
+  if (!success) {
+    const retryAfter = Math.floor((reset - Date.now()) / 1000);
+    return NextResponse.json(
+      {
+        error: `Too many requests. Please try again in ${retryAfter} seconds.`,
+        retryAfter,
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": retryAfter.toString(),
+          "X-RateLimit-Limit": limit.toString(),
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": reset.toString(),
+        },
+      }
+    );
+  }
 
   try {
-     const client = await clientPromise;
+    const client = await clientPromise;
     const db = client.db("Duaelity");
     const userCollection = db.collection<User>("users"); // Specify User type
 
     const user = await userCollection.findOne({ username: username.trim() });
-    
+
     // Handle missing fields safely
     const attempts = user?.failedLoginAttempts ?? 0;
     const lockUntil = user?.lockUntil ?? null;
 
     // Check if account is locked
     if (lockUntil && new Date(lockUntil) > new Date()) {
-      const remainingTime = Math.ceil((new Date(lockUntil).getTime() - Date.now()) / 60000);
+      const remainingTime = Math.ceil(
+        (new Date(lockUntil).getTime() - Date.now()) / 60000
+      );
       return NextResponse.json(
         { error: `Account locked. Try again in ${remainingTime} minutes.` },
         { status: 423 }
@@ -43,22 +77,27 @@ export async function POST(request: NextRequest) {
     if (!isPasswordValid) {
       // Safely increment attempts (handle NaN cases)
       const newAttempts = (isNaN(attempts) ? 0 : attempts) + 1;
-      
+
       const updateData = {
         failedLoginAttempts: newAttempts,
-        ...(newAttempts >= MAX_FAILED_ATTEMPTS ? { 
-          lockUntil: new Date(Date.now() + LOCK_TIME) 
-        } : {})
+        ...(newAttempts >= MAX_FAILED_ATTEMPTS
+          ? {
+              lockUntil: new Date(Date.now() + LOCK_TIME),
+            }
+          : {}),
       };
 
-      await userCollection.updateOne(
-        { _id: user._id },
-        { $set: updateData }
-      );
+      await userCollection.updateOne({ _id: user._id }, { $set: updateData });
 
       const remainingAttempts = MAX_FAILED_ATTEMPTS - newAttempts;
       return NextResponse.json(
-        { error: `Invalid credentials. ${remainingAttempts > 0 ? `${remainingAttempts} attempts remaining` : 'Account locked'}` },
+        {
+          error: `Invalid credentials. ${
+            remainingAttempts > 0
+              ? `${remainingAttempts} attempts remaining`
+              : "Account locked"
+          }`,
+        },
         { status: 401 }
       );
     }
@@ -92,9 +131,8 @@ export async function POST(request: NextRequest) {
       path: "/",
     });
     return response;
-
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Rate limiting error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -10,16 +10,38 @@ const SignIn = () => {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
+  const [retryAfter, setRetryAfter] = useState(0);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isRateLimited || retryAfter <= 0) return;
+
+    const timer = setInterval(() => {
+      setRetryAfter((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsRateLimited(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isRateLimited, retryAfter]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Prevent submission if already rate limited
+    if (isRateLimited) return;
+
     setIsSubmitting(true);
     setErrorMessage("");
 
@@ -27,27 +49,28 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       const response = await fetch(`/api/Authentication/SignIn`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify(formData),
       });
 
+      if (response.status === 429) {
+        const retry = parseInt(response.headers.get("Retry-After") || "60", 10);
+        setIsRateLimited(true);
+        setRetryAfter(retry);
+        setErrorMessage(
+          `Too many attempts. Please wait ${retry} seconds before trying again.`
+        );
+        return;
+      }
+
       const result = await response.json();
-      
+
       if (response.ok) {
         router.push("/");
         router.refresh();
       } else {
         setErrorMessage(result.error || "Login failed. Please try again.");
-        
-        // Disable form if account is locked (status 423)
-        if (response.status === 423) {
-          (e.target as HTMLFormElement).querySelectorAll('input, button').forEach(
-            el => el.setAttribute('disabled', 'true')
-          );
-        }
       }
     } catch (error) {
-      console.error("Error during login:", error);
       setErrorMessage("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -69,7 +92,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         )}
 
         <div className="mb-4 text-left">
-          <label htmlFor="username" className="block font-semibold text-gray-300 mb-1">
+          <label
+            htmlFor="username"
+            className="block font-semibold text-gray-300 mb-1"
+          >
             Username:
           </label>
           <input
@@ -85,7 +111,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         </div>
 
         <div className="mb-6 text-left">
-          <label htmlFor="password" className="block font-semibold text-gray-300 mb-1">
+          <label
+            htmlFor="password"
+            className="block font-semibold text-gray-300 mb-1"
+          >
             Password:
           </label>
           <input
@@ -100,14 +129,54 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           />
         </div>
 
+        {/* Countdown with a bar */}
+        {isRateLimited && (
+          <div className="mb-4">
+            <div className="flex items-center gap-2 text-blue-700">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span>Time remaining: {retryAfter} seconds</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+              <div
+                className="bg-blue-500 h-2.5 rounded-full"
+                style={{ width: `${(retryAfter / 60) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        {/* Disable button if rate limited */}
         <button
           type="submit"
-          disabled={isSubmitting}
-          className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-all duration-200 ${
-            isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+          disabled={isSubmitting || isRateLimited}
+          className={`w-full ${
+            isRateLimited
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          } text-white font-bold py-2 rounded-lg transition-all duration-200 ${
+            isSubmitting ? "opacity-50" : ""
           }`}
         >
-          {isSubmitting ? 'Signing In...' : 'Log In'}
+          {isRateLimited
+            ? `Please wait (${retryAfter}s)`
+            : isSubmitting
+            ? "Signing In..."
+            : "Log In"}
         </button>
       </form>
 
