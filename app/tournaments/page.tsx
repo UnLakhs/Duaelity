@@ -151,7 +151,7 @@ const AllTournaments = () => {
     <div className="min-h-screen pt-3">
       <div className="flex lg:flex-row flex-col items-center justify-between lg:ml-40 mx-auto mb-6">
         <Search onSearch={(query) => setSearchQuery(query)} />
-        <span>ORDER BY WILL BE HERE</span>
+        {/* <span>ORDER BY WILL BE HERE</span> */}
       </div>
 
       {/* Filter Toggle Button */}
