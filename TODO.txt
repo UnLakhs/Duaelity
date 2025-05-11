@@ -5,10 +5,8 @@ IMPORTANT TO COMPLETE BEFORE RELEASE
     -Figure out what to do with old tournaments (e.g., delete match history but keep player placements unless needed for player match history).
 
 2. User Authentication and Profiles
-    -Add failed login attempts and lockout mechanism after too many failed attempts.
     -Make the user profile page (display user info, tournaments created, and tournaments joined).
     -Add a way to reset password (via email).
-    -Add a way to change password (in user settings).
     -Send OTP (One-Time Password) to email for registration.
 
 3. UI/UX Improvements
