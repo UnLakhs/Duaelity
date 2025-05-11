@@ -87,7 +87,7 @@ const Profile = () => {
         <h1 className="text-2xl sm:text-3xl font-bold mb-4">Profile</h1>
 
         {/* Profile Image Hover Upload */}
-        <div className="relative inline-block mb-6 group">
+        <div className="relative inline-block mb-1 group">
           <img
             src={user?.profileImage || "/images/default-avatar.jpg"}
             alt="Profile"
@@ -113,7 +113,7 @@ const Profile = () => {
           {isUploading ? "Uploading..." : "Edit Profile Picture"}
         </p>
         {/* User Info Section */}
-        <div className="mt-6 space-y-2">
+        <div className="mt-5 space-y-2">
           <h2 className="text-xl font-semibold">{user?.username}</h2>
           <p className="text-gray-300">{user?.email}</p>
         </div>
