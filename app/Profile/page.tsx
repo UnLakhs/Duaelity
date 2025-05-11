@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
@@ -46,7 +45,6 @@ const Profile = () => {
 
       const data = await response.json();
       const imageUrl = data.url;
-      setProfileImage(imageUrl);
 
       // Send to backend to save in DB
       await fetch("/api/users/update-profile-image", {
