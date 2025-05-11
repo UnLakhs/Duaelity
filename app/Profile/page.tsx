@@ -2,12 +2,10 @@
 import { FaUpload, FaSignOutAlt } from "react-icons/fa";
 import { User } from "../Cosntants/constants";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
