@@ -71,6 +71,7 @@ const SignIn = () => {
         setErrorMessage(result.error || "Login failed. Please try again.");
       }
     } catch (error) {
+      console.error("Error during login:", error);
       setErrorMessage("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
