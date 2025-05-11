@@ -10,9 +10,9 @@ export const currencyList = [
   { code: "JPY", symbol: "¥", name: "Japanese Yen" },
   { code: "AUD", symbol: "$", name: "Australian Dollar" },
   { code: "CAD", symbol: "$", name: "Canadian Dollar" },
-  {code : "CNY", symbol: "¥", name: "Chinese Yuan"},
-  {code : "INR", symbol: "₹", name: "Indian Rupee"},
-  {code: "CHF", symbol: "₣", name: "Swiss Franc"},
+  { code: "CNY", symbol: "¥", name: "Chinese Yuan" },
+  { code: "INR", symbol: "₹", name: "Indian Rupee" },
+  { code: "CHF", symbol: "₣", name: "Swiss Franc" },
 ];
 
 export type User = {
@@ -23,6 +23,8 @@ export type User = {
   isAdmin: boolean;
   teamName?: string;
   profileImage?: string;
+  failedLoginAttempts?: number; // Optional with default
+  lockUntil?: Date | null; // Optional with default
 };
 
 export interface Tournament {
@@ -38,7 +40,7 @@ export interface Tournament {
   format: TournamentFormat;
   entryFee: number;
   currency: string;
-  prizes: TournamentPrizes[]; 
+  prizes: TournamentPrizes[];
   totalPrizePool: number;
   rules: string;
   createdBy: User;
