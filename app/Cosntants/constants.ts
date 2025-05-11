@@ -22,6 +22,7 @@ export type User = {
   email: string;
   isAdmin: boolean;
   teamName?: string;
+  profileImage?: string;
 };
 
 export interface Tournament {
