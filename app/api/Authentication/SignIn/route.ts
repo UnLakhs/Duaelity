@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     // Generate token (your existing code)
     const token = jwt.sign(
       {
-        id: user._id,
+        _id: user._id,
         username: user.username,
         isAdmin: user.isAdmin,
         profileImage: user.profileImage,

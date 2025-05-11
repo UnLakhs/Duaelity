@@ -16,7 +16,7 @@ export const currencyList = [
 ];
 
 export type User = {
-  id: ObjectId;
+  _id: ObjectId;
   username: string;
   password: string;
   email: string;
