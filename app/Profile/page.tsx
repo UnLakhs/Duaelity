@@ -1,11 +1,13 @@
 "use client";
-import { FaUpload } from "react-icons/fa";
+import { FaUpload, FaSignOutAlt } from "react-icons/fa";
 import { User } from "../Cosntants/constants";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -66,6 +68,21 @@ const Profile = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      // 1. Call sign-out API
+      await fetch("/api/Authentication/SignOut", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      // 2. Force full reload to clear all states
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center text-center bg-[url('/images/brawlhalla-bg-2.jpg')] bg-cover bg-center min-h-screen px-4">
       <div className="shadow-lg text-white bg-gray-900/90 shadow-gray-400 rounded-lg p-6 sm:p-10 w-full max-w-xs sm:max-w-md md:max-w-[24rem]">
@@ -97,6 +114,20 @@ const Profile = () => {
         <p className="text-sm opacity-75">
           {isUploading ? "Uploading..." : "Edit Profile Picture"}
         </p>
+        {/* User Info Section */}
+        <div className="mt-6 space-y-2">
+          <h2 className="text-xl font-semibold">{user?.username}</h2>
+          <p className="text-gray-300">{user?.email}</p>
+        </div>
+
+        {/* Sign Out Button */}
+        <button
+          onClick={handleSignOut}
+          className="mt-8 w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors"
+        >
+          <FaSignOutAlt />
+          Sign Out
+        </button>
       </div>
     </div>
   );
