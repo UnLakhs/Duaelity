@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -8,25 +9,19 @@ const SignIn = () => {
     password: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const validateForm = () => {
-    const { username, password } = formData;
-    if (!username || !password) {
-      setErrorMessage("All fields are required.");
-      return false;
-    }
-    setErrorMessage("");
-    return true;
-  };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    setIsSubmitting(true);
+    setErrorMessage("");
 
     try {
       const response = await fetch(`/api/Authentication/SignIn`, {
@@ -36,15 +31,25 @@ const SignIn = () => {
       });
 
       const result = await response.json();
+      
       if (response.ok) {
-        alert("User logged in successfully!");
-        window.location.href = "/";
+        router.push("/");
+        router.refresh();
       } else {
         setErrorMessage(result.error || "Login failed. Please try again.");
+        
+        // Disable form if account is locked (status 423)
+        if (response.status === 423) {
+          (e.target as HTMLFormElement).querySelectorAll('input, button').forEach(
+            el => el.setAttribute('disabled', 'true')
+          );
+        }
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error during login:", error);
       setErrorMessage("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -96,9 +101,12 @@ const SignIn = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-all duration-200"
+          disabled={isSubmitting}
+          className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-all duration-200 ${
+            isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          Log In
+          {isSubmitting ? 'Signing In...' : 'Log In'}
         </button>
       </form>
 
