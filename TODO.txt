@@ -1,6 +1,5 @@
 IMPORTANT TO COMPLETE BEFORE RELEASE
 1. Tournament Features    
-    -Reset tournaments when there is no custom prize pool filter 
     -Add filtering, and sorting to the tournament listing page.
     -Add a filter for the case that a tournament has no money as a reward
     -Figure out what to do with old tournaments (e.g., delete match history but keep player placements unless needed for player match history).
