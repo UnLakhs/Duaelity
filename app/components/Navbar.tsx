@@ -5,12 +5,14 @@ import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { CiLogin } from "react-icons/ci";
 import Link from "next/link";
 import { User } from "../Cosntants/constants";
+import { usePathname } from "next/navigation";
 
 const navDivStyles = `flex gap-2 cursor-pointer hover:text-white transition-colors duration-300 p-4 justify-start items-center`;
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const pathName = usePathname();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -24,14 +26,14 @@ const NavBar = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setUser(data.user);
+          setUser(data.user || null);
         }
       } catch (error) {
         console.error("Failed to fetch user session", error);
       }
     };
     fetchUser();
-  }, []);
+  }, [pathName]);
 
   return (
     <nav className="bg-[#0f1925] text-[#8392A5] sm:static lg:fixed w-full lg:w-36 lg:h-screen z-10 transition-all duration-300 flex flex-col">
