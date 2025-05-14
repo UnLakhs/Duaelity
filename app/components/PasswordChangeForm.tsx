@@ -14,17 +14,7 @@ interface PasswordChangeFormProps {
   userId: string;
 }
 
-export const PasswordChangeForm = ({userId}: PasswordChangeFormProps) => {
-
-  if (!userId) {
-    return (
-      <div className="mt-6 w-full">
-        <div className="text-center text-gray-400">
-          Loading user information...
-        </div>
-      </div>
-    );
-  }
+export const PasswordChangeForm = ({ userId }: PasswordChangeFormProps) => {
   const {
     register,
     handleSubmit,
@@ -101,7 +91,15 @@ export const PasswordChangeForm = ({userId}: PasswordChangeFormProps) => {
       setIsChangingPassword(false);
     }
   };
-
+  if (!userId) {
+    return (
+      <div className="mt-6 w-full">
+        <div className="text-center text-gray-400">
+          Loading user information...
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="mt-6 w-full">
       <h3 className="text-lg font-semibold mb-3 flex items-center justify-center gap-2">
