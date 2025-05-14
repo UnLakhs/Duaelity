@@ -8,6 +8,7 @@ import { PasswordChangeForm } from "../components/PasswordChangeForm";
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,6 +61,7 @@ const Profile = () => {
 
       // Update state
       setUser((prev) => (prev ? { ...prev, profileImage: imageUrl } : prev));
+      setUploadSuccess(true);
     } catch (error) {
       console.error("Error uploading profile image:", error);
       alert("Failed to upload profile image. Please try again.");
@@ -111,16 +113,29 @@ const Profile = () => {
           />
         </div>
 
-        <p className="text-sm opacity-75">
-          {isUploading ? "Uploading..." : "Edit Profile Picture"}
-        </p>
+        <div className="mt-1 space-y-1">
+          <p className="text-sm opacity-75">
+            {isUploading ? "Uploading..." : "Edit Profile Picture"}
+          </p>
+
+          {uploadSuccess && !isUploading && (
+            <>
+              <p className="text-green-400 text-sm font-medium">
+                Profile picture updated successfully!
+              </p>
+              <p className="text-xs text-yellow-300">
+                Changes may take effect after signing out and back in.
+              </p>
+            </>
+          )}
+        </div>
         {/* User Info Section */}
         <div className="mt-5 space-y-2">
           <h2 className="text-xl font-semibold">{user?.username}</h2>
           <p className="text-gray-300">{user?.email}</p>
         </div>
 
-         {/* Password Change Section */}
+        {/* Password Change Section */}
         {user && <PasswordChangeForm userId={user._id.toString()} />}
 
         {/* Sign Out Button */}
