@@ -1,5 +1,6 @@
 // app/profile/page.tsx
 "use client";
+
 import { FaSignOutAlt, FaUpload } from "react-icons/fa";
 import { User } from "../Cosntants/constants";
 import { useEffect, useState } from "react";
